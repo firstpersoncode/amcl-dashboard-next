@@ -1,7 +1,19 @@
-import '../styles/globals.css'
+import { useRouter } from "next/router";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import "styles/globals.scss";
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+export default function _App({ Component, pageProps }) {
+  const { asPath } = useRouter();
+
+  return (
+    <ThemeProvider
+      theme={createTheme({
+        palette: {
+          mode: "dark",
+        },
+      })}
+    >
+      <Component {...pageProps} key={asPath} />
+    </ThemeProvider>
+  );
 }
-
-export default MyApp
