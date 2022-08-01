@@ -1,12 +1,12 @@
 import { CommonContextProvider } from "context/Common";
 import { AppSessionContextProvider, withSessionSsr } from "context/AppSession";
-import Dashboard from "components/Dashboard";
+import ModalLogin from "components/ModalLogin";
 
-export default function Index({ session, global }) {
+export default function Login({ session, global }) {
   return (
     <AppSessionContextProvider session={session}>
       <CommonContextProvider context={global}>
-        <Dashboard />
+        <ModalLogin />
       </CommonContextProvider>
     </AppSessionContextProvider>
   );
@@ -16,11 +16,11 @@ export const getServerSideProps = withSessionSsr(
   async function getServerSideProps(ctx) {
     const isLoggedIn = ctx.req.session.getEvent("admin");
 
-    if (!isLoggedIn) {
+    if (isLoggedIn) {
       return {
         redirect: {
           permanent: false,
-          destination: "/login",
+          destination: "/",
         },
       };
     }

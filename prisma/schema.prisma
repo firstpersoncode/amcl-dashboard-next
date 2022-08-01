@@ -1,0 +1,172 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["mongodb"]
+}
+
+model session {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  event Json
+  
+  events event[]
+
+  expiresIn    DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model event {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name     String @unique
+  event Json
+
+  session    session   @relation(fields: [sessionId], references: [id])
+  sessionId  String @db.ObjectId
+
+  archived  Boolean
+
+  expiresIn    DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model admin {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String @unique
+  password  String
+  name      String
+  role      Int? @default(0)
+
+  active     Boolean
+  archived  Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model school {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String  @unique
+  password  String
+  name      String
+  category  SchoolCategory @default(hs)
+  branch    SchoolBranch @default(futsal)
+  participants participant[]
+
+  active     Boolean
+  archived  Boolean
+  completed  Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum SchoolCategory {
+  js
+  hs
+  univ
+}
+
+enum SchoolBranch {
+  futsal
+  dance
+}
+
+model participant {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String  @unique
+  name      String
+  phone     String
+  dob       DateTime
+  gender    ParticipantGender @default(male)
+  type      ParticipantType @default(student)
+  studentId String?
+  class     String?
+  futsalPosition  ParticipantFutsalPosition?
+  officialPosition  ParticipantOfficialPosition?
+  instagram String?
+
+  files    file[]
+  qrcode    qrcode?
+  school    school   @relation(fields: [schoolId], references: [id])
+  schoolId  String @db.ObjectId
+  
+  active     Boolean
+  archived  Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ParticipantGender {
+  male
+  female
+}
+
+enum ParticipantType {
+  student
+  scholar
+  official
+}
+
+enum ParticipantFutsalPosition {
+  goal
+  forward
+  mid
+  back
+}
+
+enum ParticipantOfficialPosition {
+  coach
+  coachAssistant
+  manager
+  teacher
+}
+
+model file {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  type      FileType @default(avatar)
+  name      String
+  url       String
+  
+  owner    participant   @relation(fields: [ownerId], references: [id])
+  ownerId  String @db.ObjectId
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum FileType {
+  avatar
+  license
+}
+
+model qrcode {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  value     String @unique
+  
+  owner    participant   @relation(fields: [ownerId], references: [id])
+  ownerId  String @db.ObjectId @unique
+  
+  scannedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model scan {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  
+  qrcodeId    String @db.ObjectId
+  scannerId  String @db.ObjectId
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

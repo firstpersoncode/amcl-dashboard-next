@@ -1,13 +1,5 @@
 import { useState } from "react";
-import {
-  Box,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Stack,
-  TextField,
-} from "@mui/material";
+import { Box, Dialog, IconButton, Stack, TextField } from "@mui/material";
 import { Cameraswitch, Input, CenterFocusStrong } from "@mui/icons-material";
 import { QrReader } from "react-qr-reader";
 
@@ -42,6 +34,8 @@ export default function QRScanner({ open, onClose }) {
   };
 
   const handleQrScan = (result, error) => {
+    if (processing) return;
+
     if (result) {
       alert(result?.text);
     }

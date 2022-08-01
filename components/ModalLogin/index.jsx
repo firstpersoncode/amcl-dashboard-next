@@ -50,7 +50,7 @@ export default function ModalLogin() {
             <CardMedia
               component="img"
               height="80"
-              image="/images/banner.webp"
+              image="/banner.webp"
               alt="Banner"
             />
             <form onSubmit={handleSubmit}>

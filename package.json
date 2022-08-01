@@ -6,26 +6,37 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma": "npx prisma db push && npx prisma generate"
   },
   "dependencies": {
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
+    "@hcaptcha/react-hcaptcha": "^1.4.4",
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.9.2",
     "@mui/x-date-pickers": "^5.0.0-beta.3",
+    "@prisma/client": "^4.1.1",
     "axios": "^0.27.2",
+    "bcryptjs": "^2.4.3",
     "date-fns": "^2.29.1",
+    "formidable": "^2.0.1",
+    "imagemin": "^8.0.1",
+    "imagemin-mozjpeg": "^10.0.0",
+    "imagemin-pngquant": "^9.0.2",
+    "imagemin-webp": "^7.0.0",
     "jsonwebtoken": "^8.5.1",
     "next": "12.2.3",
     "next-useragent": "^2.8.0",
     "nookies": "^2.5.2",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-qr-reader": "^3.0.0-beta-1"
   },
   "devDependencies": {
     "eslint": "8.20.0",
     "eslint-config-next": "12.2.3",
+    "prisma": "^4.1.1",
     "sass": "^1.54.0"
   }
 }

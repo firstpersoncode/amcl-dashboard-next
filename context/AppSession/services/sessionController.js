@@ -1,9 +1,9 @@
 import { add, isAfter } from "date-fns";
 import { sign, verify } from "jsonwebtoken";
 import nookies from "nookies";
-// import { createEvent, deleteEvent, updateEvent } from "prisma/services/event";
+import { createEvent, deleteEvent, updateEvent } from "prisma/services/event";
 
-// import { createSession, getSession } from "prisma/services/session";
+import { createSession, getSession } from "prisma/services/session";
 import parseUserAgent from "../utils/parseUserAgent";
 
 export default class SessionController {
@@ -52,10 +52,7 @@ export default class SessionController {
       expiresIn: this.expiresIn,
     };
 
-    // const { id } = await createSession(this.session);
-    // const token = sign(id, this.secretKey);
-
-    const id = this.session.name;
+    const { id } = await createSession(this.session);
     const token = sign(id, this.secretKey);
     nookies.set(this.ctx, this.session.name, token, {
       maxAge: this.maxAge,
@@ -80,7 +77,7 @@ export default class SessionController {
     if (token?.value) {
       try {
         const id = verify(token.value, this.secretKey);
-        // this.session = await getSession(id);
+        this.session = await getSession(id);
       } catch (err) {
         console.log(err);
       }
@@ -109,14 +106,14 @@ export default class SessionController {
         return e;
       });
 
-      // await updateEvent(newEvent.name, newEvent);
+      await updateEvent(newEvent.name, newEvent);
     } else {
       this.session.events = [
         ...this.session.events,
         { ...newEvent, sessionId: this.session.id },
       ];
 
-      // await createEvent({ ...newEvent, sessionId: this.session.id });
+      await createEvent({ ...newEvent, sessionId: this.session.id });
     }
   }
 
@@ -125,7 +122,7 @@ export default class SessionController {
       (event) => event.name !== `${this.session.id}.${name}`
     );
 
-    // await deleteEvent(`${this.session.id}.${name}`);
+    await deleteEvent(`${this.session.id}.${name}`);
   }
 
   _getEvent(name) {

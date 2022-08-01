@@ -2,7 +2,7 @@ import { CommonContextProvider } from "context/Common";
 import { AppSessionContextProvider, withSessionSsr } from "context/AppSession";
 import Dashboard from "components/Dashboard";
 
-export default function Index({ session, global }) {
+export default function Page({ session, global }) {
   return (
     <AppSessionContextProvider session={session}>
       <CommonContextProvider context={global}>

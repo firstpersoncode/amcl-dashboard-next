@@ -13,15 +13,12 @@ import {
 import { Inbox, Mail } from "@mui/icons-material";
 import useIsMobile from "hooks/useIsMobile";
 
-const container =
-  typeof window !== undefined ? () => window.document.body : undefined;
-
 export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
   const isMobile = useIsMobile();
   return (
     <SwipeableDrawer
       open={open}
-      container={container}
+      onOpen={onToggleDrawer}
       onClose={onToggleDrawer}
       variant={isMobile ? "temporary" : "persistent"}
       anchor="left"
