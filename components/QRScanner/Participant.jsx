@@ -33,7 +33,7 @@ export default function Participant({ participant, onClose }) {
     <>
       <DialogTitle>
         <Typography variant="h3">{participant.name}</Typography>
-        <Typography fontSize="small">{participant.idStringString}</Typography>
+        <Typography fontSize="small">{participant.idString}</Typography>
         <IconButton
           onClick={onClose}
           sx={{
