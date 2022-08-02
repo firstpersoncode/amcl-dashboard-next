@@ -6,6 +6,7 @@ const componentPages = {
   "/admin": require("./Admin").default,
   "/school": require("./School").default,
   "/participant": require("./Participant").default,
+  "/scanned": require("./Scanned").default,
 };
 
 export default function Page() {

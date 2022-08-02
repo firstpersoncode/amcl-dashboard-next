@@ -15,6 +15,14 @@ const { deleteSessions } = require("../prisma/services/session");
 const { deleteEvents } = require("../prisma/services/event");
 const { deleteFiles } = require("../prisma/services/file");
 
+function generateUID() {
+  let firstPart = (Math.random() * 46656) | 0;
+  let secondPart = (Math.random() * 46656) | 0;
+  firstPart = ("0000" + firstPart.toString(36)).slice(-4);
+  secondPart = ("0000" + secondPart.toString(36)).slice(-4);
+  return firstPart + secondPart;
+}
+
 function generateRandom(min = 0, max = 100) {
   let difference = max - min;
   let rand = Math.random();
@@ -56,6 +64,7 @@ async function generateSchools() {
   for (let i = 0; i < 3; i++) {
     console.log("Generate schools");
     const school = {
+      idString: generateUID(),
       email: `school@demo+${i}.com`,
       password: hashSync("schooldemo", 8),
       name: `School ${i}`,
@@ -72,6 +81,7 @@ async function generateSchools() {
     console.log("Generate participants");
     for (let j = 0; j < 14; j++) {
       const participant = {
+        idString: generateUID(),
         email: `participant@demo+${i}${j}.com`,
         name: `Participant ${j}`,
         phone: "01234567890",
@@ -102,6 +112,7 @@ async function generateSchools() {
     const limitOfficials = { js: 3, hs: 3, univ: 2 }[school.category];
     for (let j = 0; j < limitOfficials; j++) {
       const participant = {
+        idString: generateUID(),
         email: `official@demo+${i}${j}.com`,
         name: `Official ${j}`,
         phone: "01234567890",
@@ -137,7 +148,7 @@ async function generateQRCodes() {
     const { participants } = school;
     for (const participant of participants) {
       const qrcode = {
-        value: hashSync(participant.id, 5),
+        idString: generateUID(),
         ownerId: participant.id,
       };
 

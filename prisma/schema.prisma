@@ -54,6 +54,7 @@ model admin {
 
 model school {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  idString  String  @unique
   email     String  @unique
   password  String
   name      String
@@ -82,6 +83,7 @@ enum SchoolBranch {
 
 model participant {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  idString  String  @unique
   email     String  @unique
   name      String
   phone     String
@@ -151,22 +153,12 @@ enum FileType {
 
 model qrcode {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  value     String @unique
+  idString  String @unique
   
   owner    participant   @relation(fields: [ownerId], references: [id])
   ownerId  String @db.ObjectId @unique
   
   scannedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model scan {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  
-  qrcodeId    String @db.ObjectId
-  scannerId  String @db.ObjectId
-  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

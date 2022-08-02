@@ -60,6 +60,18 @@ export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
               </ListItemButton>
             </Link>
           </ListItem>
+
+          <ListItem disablePadding>
+            <Link href="/scanned" passHref>
+              <ListItemButton component="a">
+                <ListItemIcon>
+                  <Inbox />
+                </ListItemIcon>
+
+                <ListItemText primary="Kehadiran" />
+              </ListItemButton>
+            </Link>
+          </ListItem>
         </List>
         <Divider />
         <List>
@@ -71,18 +83,6 @@ export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
                 </ListItemIcon>
 
                 <ListItemText primary="Admin" />
-              </ListItemButton>
-            </Link>
-          </ListItem>
-
-          <ListItem disablePadding>
-            <Link href="/logs" passHref>
-              <ListItemButton component="a">
-                <ListItemIcon>
-                  <Inbox />
-                </ListItemIcon>
-
-                <ListItemText primary="Logs" />
               </ListItemButton>
             </Link>
           </ListItem>

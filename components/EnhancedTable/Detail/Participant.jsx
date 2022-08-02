@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {
+  Box,
   Button,
   Card,
   CardContent,
@@ -16,6 +17,7 @@ import {
 import { Close } from "@mui/icons-material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { QRCodeSVG } from "qrcode.react";
 import axios from "axios";
 import Uploader from "components/Uploader";
 import Loader from "../Loader";
@@ -135,12 +137,35 @@ export default function Participant({ detail, onClose, fetchRows }) {
     values.files?.length &&
     values.files.find((file) => file.type === "license");
 
+  const [openQRCode, setOpenQRCode] = useState(false);
+  const toggleQRCode = () => {
+    setOpenQRCode(!openQRCode);
+  };
+
   return (
     <>
       {isLoading && <Loader />}
       <DialogTitle>
-        <Typography variant="h3">{startValues.name}</Typography>
-        <Typography fontSize="small">{detail}</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+          }}
+        >
+          <Box>
+            <Typography variant="h3">{startValues.name}</Typography>
+            <Typography fontSize="small">{startValues.idString}</Typography>
+          </Box>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            {startValues.qrcode?.idString && (
+              <Button size="small" variant="contained" onClick={toggleQRCode}>
+                QR Code
+              </Button>
+            )}
+            {startValues.qrcode?.scannedAt}
+          </Box>
+        </Box>
         <IconButton
           onClick={onClose}
           sx={{
@@ -408,7 +433,6 @@ export default function Participant({ detail, onClose, fetchRows }) {
               </Card>
             </Grid>
           </Grid>
-          {/* <pre>{JSON.stringify(values, null, 4)}</pre> */}
         </DialogContent>
 
         <DialogActions>
@@ -424,6 +448,14 @@ export default function Participant({ detail, onClose, fetchRows }) {
           </Button>
         </DialogActions>
       </form>
+
+      {startValues.qrcode?.idString && (
+        <Dialog open={openQRCode} onClose={toggleQRCode}>
+          <DialogContent sx={{ backgroundColor: "#FFF" }}>
+            <QRCodeSVG value={startValues.qrcode.idString} />
+          </DialogContent>
+        </Dialog>
+      )}
 
       <Dialog open={openConfirmArchive} onClose={closeConfirmArchive}>
         <DialogContent>

@@ -1,7 +1,16 @@
 import { useState } from "react";
-import { Box, Dialog, IconButton, Stack, TextField } from "@mui/material";
+import {
+  Box,
+  Dialog,
+  DialogContent,
+  IconButton,
+  Stack,
+  TextField,
+} from "@mui/material";
 import { Cameraswitch, Input, CenterFocusStrong } from "@mui/icons-material";
 import { QrReader } from "react-qr-reader";
+import axios from "axios";
+import Loader from "./Loader";
 
 export default function QRScanner({ open, onClose }) {
   const [processing, setProcessing] = useState(false);
@@ -33,11 +42,30 @@ export default function QRScanner({ open, onClose }) {
     });
   };
 
+  const [openQRCodeDetail, setOpenQRCodeDetail] = useState(false);
+  const toggleQRCodeDetail = () => {
+    setOpenQRCodeDetail(!openQRCodeDetail);
+  };
+  const [qrcodeDetail, setQRCodeDetail] = useState();
+
+  const fetchQRDetail = async (idString) => {
+    setProcessing(true);
+    try {
+      const res = await axios.post("/api/qrcode/read", { idString });
+      setQRCodeDetail(res.data);
+      toggleQRCodeDetail();
+    } catch (err) {
+      console.error(err);
+    }
+    setProcessing(false);
+  };
+
   const handleQrScan = (result, error) => {
     if (processing) return;
 
     if (result) {
-      alert(result?.text);
+      const idString = result.text;
+      fetchQRDetail(idString);
     }
 
     if (error) {
@@ -91,7 +119,6 @@ export default function QRScanner({ open, onClose }) {
             constraints={{ facingMode }}
             videoContainerStyle={{
               width: "100vw",
-              // heigth: "300px",
             }}
           />
         </Box>
@@ -105,6 +132,14 @@ export default function QRScanner({ open, onClose }) {
           />
         </Box>
       )}
+
+      <Dialog open={openQRCodeDetail} onClose={toggleQRCodeDetail}>
+        <DialogContent>
+          <pre>{JSON.stringify(qrcodeDetail, null, 4)}</pre>
+        </DialogContent>
+      </Dialog>
+
+      {processing && <Loader />}
     </Dialog>
   );
 }

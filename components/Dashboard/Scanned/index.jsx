@@ -3,8 +3,8 @@ import { format } from "date-fns";
 import EnhancedTable from "components/EnhancedTable";
 import Filter from "./Filter";
 
-export default function School() {
-  const [filter, setFilter] = useState({});
+export default function Scanned() {
+  const [filter, setFilter] = useState({ scannedAt: { gte: new Date() } });
 
   const onChangeFilter = (name) => (e) => {
     if (name === "search") {
@@ -20,18 +20,12 @@ export default function School() {
                   mode: "insensitive",
                 },
               },
-              {
-                name: {
-                  contains: e.target.value,
-                  mode: "insensitive",
-                },
-              },
-              {
-                email: {
-                  contains: e.target.value,
-                  mode: "insensitive",
-                },
-              },
+              // {
+              //   email: {
+              //     contains: e.target.value,
+              //     mode: "insensitive",
+              //   },
+              // },
             ],
           },
         }));
@@ -41,7 +35,14 @@ export default function School() {
           search: undefined,
         }));
       }
-    } else setFilter((v) => ({ ...v, [name]: e.target.value }));
+    } else
+      setFilter((v) => ({
+        ...v,
+        scannedAt: {
+          ...v.scannedAt,
+          [name]: e.target.value ? new Date(e.target.value) : undefined,
+        },
+      }));
   };
 
   return (
@@ -49,22 +50,17 @@ export default function School() {
       <Filter filter={filter} onChangeFilter={onChangeFilter} />
 
       <EnhancedTable
-        title="Sekolah"
-        type="school"
+        title="Kehadiran"
+        type="qrcode"
         cells={[
+          "idString",
           (row) => ({
-            id: "idString",
-            label: "ID",
-            value: row?.idString,
+            id: "scannedAt",
+            label: "Discan",
+            value:
+              row?.scannedAt &&
+              format(new Date(row.scannedAt), "dd MMM yyyy - HH:mm"),
           }),
-          "name",
-          (row) => ({
-            id: "participants",
-            label: "Jumlah peserta",
-            value: row?._count.participants,
-          }),
-          "active",
-          "completed",
           (row) => ({
             id: "createdAt",
             label: "Dibuat",

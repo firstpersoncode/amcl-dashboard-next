@@ -24,6 +24,7 @@ module.exports.getAllParticipants = async ({
     ...(skip ? { skip } : {}),
     select: {
       id: true,
+      idString: true,
       name: true,
       email: true,
       type: true,
@@ -39,6 +40,8 @@ module.exports.getParticipant = async (id) => {
   const participant = await client.participant.findFirst({
     where: { id },
     select: {
+      id: true,
+      idString: true,
       name: true,
       email: true,
       phone: true,
@@ -63,7 +66,7 @@ module.exports.getParticipant = async (id) => {
       },
       qrcode: {
         select: {
-          value: true,
+          idString: true,
           scannedAt: true,
         },
       },

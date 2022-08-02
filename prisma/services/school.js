@@ -34,6 +34,7 @@ module.exports.getAllSchools = async ({
 
     select: {
       id: true,
+      idString: true,
       name: true,
       active: true,
       completed: true,
@@ -50,6 +51,8 @@ module.exports.getSchool = async (id) => {
   const school = await client.school.findFirst({
     where: { id },
     select: {
+      id: true,
+      idString: true,
       name: true,
       email: true,
       category: true,

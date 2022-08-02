@@ -15,6 +15,12 @@ export default function Participant() {
             value: e.target.value,
             OR: [
               {
+                idString: {
+                  contains: e.target.value,
+                  mode: "insensitive",
+                },
+              },
+              {
                 name: {
                   contains: e.target.value,
                   mode: "insensitive",
@@ -75,7 +81,11 @@ export default function Participant() {
         title="Peserta"
         type="participant"
         cells={[
-          "id",
+          (row) => ({
+            id: "idString",
+            label: "ID",
+            value: row?.idString,
+          }),
           "name",
           "email",
           (row) => ({
