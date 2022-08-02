@@ -13,6 +13,7 @@ import { QrReader } from "react-qr-reader";
 import axios from "axios";
 import Loader from "./Loader";
 import Participant from "./Participant";
+import useIsMobile from "hooks/useIsMobile";
 
 export default function QRScanner({ open, onClose }) {
   const [processing, setProcessing] = useState(false);
@@ -101,6 +102,8 @@ export default function QRScanner({ open, onClose }) {
     onClose();
   };
 
+  const isMobile = useIsMobile();
+
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <Stack
@@ -172,6 +175,7 @@ export default function QRScanner({ open, onClose }) {
       <Dialog
         fullWidth
         maxWidth="md"
+        fullScreen={isMobile}
         open={openQRCodeDetail}
         onClose={toggleQRCodeDetail}
       >
