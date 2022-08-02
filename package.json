@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "prisma": "npx prisma db push && npx prisma generate",
     "dev": "next dev",
-    "build": "next build",
+    "build": "yarn prisma && next build",
     "start": "next start",
     "lint": "next lint",
-    "prisma": "npx prisma db push && npx prisma generate"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.137.0",
