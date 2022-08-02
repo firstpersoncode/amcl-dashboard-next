@@ -55,7 +55,7 @@ export default function Scanned({ detail, onClose }) {
       {isLoading && <Loader />}
       <DialogTitle>
         <Typography variant="h3">{owner.name}</Typography>
-        <Typography fontSize="small">{owner.idStringString}</Typography>
+        <Typography fontSize="small">{owner.idString}</Typography>
         <IconButton
           onClick={onClose}
           sx={{
