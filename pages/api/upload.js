@@ -1,4 +1,5 @@
 import fs from "fs";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import formidable from "formidable";
 import imagemin from "imagemin";
 import imageminMozjpeg from "imagemin-mozjpeg";
@@ -13,57 +14,87 @@ export const config = {
   },
 };
 
-const saveFile = async ({ type, ownerId }, file) => {
-  const data = fs.readFileSync(file.filepath);
-  const uploadDir = "./public/upload";
+const s3Client = new S3Client({
+  endpoint: `https://${process.env.DO_SPACES_ENDPOINT}`,
+  region: process.env.DO_SPACES_REGION,
+  credentials: {
+    accessKeyId: process.env.DO_SPACES_KEY,
+    secretAccessKey: process.env.DO_SPACES_SECRET,
+  },
+});
 
-  if (!fs.existsSync(`${uploadDir}/${ownerId}/${type}`)) {
-    fs.mkdirSync(`${uploadDir}/${ownerId}/${type}`, { recursive: true });
-  } else {
-    fs.rmdirSync(`${uploadDir}/${ownerId}/${type}`, { recursive: true });
-    fs.mkdirSync(`${uploadDir}/${ownerId}/${type}`, { recursive: true });
-  }
+const resizeFile = async ({
+  source,
+  destination,
+  filepath,
+  originalFilename,
+}) => {
+  const stats = fs.statSync(filepath);
+  const fileSizeInBytes = stats.size;
+  const quality = fileSizeInBytes > 1000000 ? 10 : 30;
 
-  fs.writeFileSync(
-    `${uploadDir}/${ownerId}/${type}/${file.originalFilename}`,
-    data
-  );
-
-  fs.unlinkSync(file.filepath);
-
-  const fileExt = file.originalFilename.split(".").pop().toLowerCase();
+  const fileExt = originalFilename.split(".").pop().toLowerCase();
   const plugins = [];
   if (["jpg", "jpeg"].includes(fileExt))
-    plugins.push(imageminMozjpeg({ quality: 65 }));
-  else if (fileExt === "png") plugins.push(imageminPngquant([0.5, 0.65]));
-  else if (fileExt === "webp") plugins.push(imageminWebp({ quality: 65 }));
-  else throw new Error("File not supported");
+    plugins.push(imageminMozjpeg({ quality }));
+  else if (fileExt === "png") plugins.push(imageminPngquant([quality / 100]));
+  else if (fileExt === "webp") plugins.push(imageminWebp({ quality }));
 
-  const files = await imagemin([`${uploadDir}/${ownerId}/${type}/*`], {
-    destination: `${uploadDir}/${ownerId}/${type}/compressed`,
+  if (!fs.existsSync(source)) {
+    fs.mkdirSync(source, { recursive: true });
+  }
+
+  const data = fs.readFileSync(filepath);
+  fs.writeFileSync(`${source}/${originalFilename}`, data);
+
+  await imagemin([`${source}/${originalFilename}`], {
+    destination,
     plugins,
   });
 
-  fs.unlinkSync(`${uploadDir}/${ownerId}/${type}/${file.originalFilename}`);
+  return source;
+};
 
-  const compressedFile = files[0];
-  const destinationPath = compressedFile.destinationPath
-    .replace(/\\/g, "/")
-    .split("/");
+const uploadToDOSpaces = async (file) => {
+  let isCompressed;
+  if (file.size > 500000)
+    isCompressed = await resizeFile({
+      source: `./tmp/${file.newFilename}`,
+      destination: `./tmp/${file.newFilename}/compressed`,
+      filepath: file.filepath,
+      originalFilename: file.originalFilename,
+    });
 
-  destinationPath.shift();
+  const Body = fs.readFileSync(
+    isCompressed
+      ? `${isCompressed}/compressed/${file.originalFilename}`
+      : file.filepath
+  );
 
-  await createOrUpdateFile(
+  const params = {
+    Bucket: process.env.DO_SPACES_BUCKET,
+    Key: `${file.newFilename}-${file.originalFilename}`,
+    Body,
+    ACL: "public-read",
+    ContentType: file.mimetype,
+  };
+
+  await s3Client.send(new PutObjectCommand(params));
+
+  if (isCompressed) fs.rmSync(`./tmp/${file.newFilename}`, { recursive: true });
+  else fs.unlinkSync(file.filepath);
+};
+
+const saveFile = async ({ type, ownerId }, file) => {
+  return createOrUpdateFile(
     { type, ownerId },
     {
       type,
-      name: destinationPath[destinationPath.length - 1],
-      url: `/${destinationPath.join("/")}`,
+      name: `${file.newFilename}-${file.originalFilename}`,
+      url: `https://${process.env.DO_SPACES_BUCKET}.${process.env.DO_SPACES_ENDPOINT}/${file.newFilename}-${file.originalFilename}`,
       ownerId,
     }
   );
-
-  return;
 };
 
 export default withSession(async function upload(req, res) {
@@ -72,11 +103,21 @@ export default withSession(async function upload(req, res) {
   if (!admin || admin.role < 2) return res.status(403).send("Forbidden");
 
   const form = new formidable.IncomingForm();
-  form.parse(req, async function (err, fields, files) {
+  return form.parse(req, async function (err, fields, files) {
+    if (!files.file) return res.status(403).send();
     try {
+      if (
+        !/^image\/((png)|(jpg)|(jpeg)|(svg)|(webp)).*$/g.test(
+          files.file.mimetype.toLowerCase()
+        )
+      )
+        throw "File not supported";
+      if (files.file.size > 3000000) throw "File size not supported";
+
+      await uploadToDOSpaces(files.file);
       await saveFile(fields, files.file);
       if (err) throw err;
-      res.status(201).send();
+      res.status(201).send("Berhasil upload file");
     } catch (err) {
       res.status(500).send(err);
     }

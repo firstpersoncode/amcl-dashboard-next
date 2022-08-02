@@ -6,11 +6,18 @@ import {
   CardActions,
   CardContent,
   CardMedia,
+  Dialog,
+  DialogContent,
   TextField,
+  Typography,
 } from "@mui/material";
 import axios from "axios";
+import Loader from "./Loader";
 
 export default function Uploader({ type, value, ownerId }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [saved, setSaved] = useState(false);
   const [image, setImage] = useState(null);
   const [createObjectURL, setCreateObjectURL] = useState(null);
 
@@ -18,17 +25,33 @@ export default function Uploader({ type, value, ownerId }) {
     if (event.target.files && event.target.files[0]) {
       const i = event.target.files[0];
 
+      setSaved(false);
       setImage(i);
       setCreateObjectURL(URL.createObjectURL(i));
     }
   };
 
   const uploadToServer = async (event) => {
-    const body = new FormData();
-    body.append("file", image);
-    body.append("type", type);
-    body.append("ownerId", ownerId);
-    await axios.post("/api/upload", body);
+    setIsLoading(true);
+    try {
+      const body = new FormData();
+      body.append("file", image);
+      body.append("type", type);
+      body.append("ownerId", ownerId);
+      await axios.post("/api/upload", body);
+      setSaved(true);
+    } catch (err) {
+      if (err.response?.data) setMessage(err.response.data);
+      setOpenDialogMessage(true);
+      console.error(err);
+    }
+    setIsLoading(false);
+  };
+
+  const [openDialogMessage, setOpenDialogMessage] = useState(false);
+
+  const handleCloseDialogMessage = () => {
+    setOpenDialogMessage(false);
   };
 
   return (
@@ -50,7 +73,7 @@ export default function Uploader({ type, value, ownerId }) {
         />
       </CardActionArea>
 
-      {image && (
+      {!saved && image && (
         <CardContent>
           <TextField
             fullWidth
@@ -64,7 +87,7 @@ export default function Uploader({ type, value, ownerId }) {
         </CardContent>
       )}
 
-      {image && (
+      {!saved && image && (
         <CardActions>
           <Button
             size="small"
@@ -76,6 +99,16 @@ export default function Uploader({ type, value, ownerId }) {
           </Button>
         </CardActions>
       )}
+
+      {isLoading && <Loader />}
+
+      <Dialog open={openDialogMessage} onClose={handleCloseDialogMessage}>
+        <DialogContent>
+          <Typography variant="p" component="div" sx={{ textAlign: "center" }}>
+            {message}
+          </Typography>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
