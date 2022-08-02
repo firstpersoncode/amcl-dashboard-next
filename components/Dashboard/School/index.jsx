@@ -7,7 +7,35 @@ export default function School() {
   const [filter, setFilter] = useState({});
 
   const onChangeFilter = (name) => (e) => {
-    setFilter((v) => ({ ...v, [name]: e.target.value }));
+    if (name === "search") {
+      if (e.target.value) {
+        setFilter((v) => ({
+          ...v,
+          search: {
+            value: e.target.value,
+            OR: [
+              {
+                name: {
+                  contains: e.target.value,
+                  mode: "insensitive",
+                },
+              },
+              {
+                email: {
+                  contains: e.target.value,
+                  mode: "insensitive",
+                },
+              },
+            ],
+          },
+        }));
+      } else {
+        setFilter((v) => ({
+          ...v,
+          search: undefined,
+        }));
+      }
+    } else setFilter((v) => ({ ...v, [name]: e.target.value }));
   };
 
   return (

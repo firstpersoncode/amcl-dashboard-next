@@ -6,6 +6,11 @@ export default withSession(async function count(req, res) {
   if (!req.session.getEvent("admin")) return res.status(403).send("Forbidden");
 
   const { filter } = req.body;
-  const count = await countSchools({ filter });
+  const count = await countSchools({
+    filter: {
+      ...filter,
+      ...(filter?.search ? { OR: filter.search.OR, search: undefined } : {}),
+    },
+  });
   res.status(200).json({ count });
 });

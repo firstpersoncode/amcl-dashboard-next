@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Grid, MenuItem, Paper, TextField } from "@mui/material";
+import {
+  Grid,
+  InputAdornment,
+  MenuItem,
+  Paper,
+  TextField,
+} from "@mui/material";
+import { Search } from "@mui/icons-material";
 import axios from "axios";
 import Loader from "./Loader";
 
@@ -28,6 +35,24 @@ export default function Filter({
   return (
     <Paper sx={{ padding: 2 }}>
       <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <TextField
+            size="small"
+            fullWidth
+            label="Cari"
+            value={filter.search?.value || ""}
+            onChange={onChangeFilter("search")}
+            placeholder="ID, Nama, Email, NIM/NIS, No. Telephone, Instagram"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+
         <Grid item xs={6}>
           <TextField
             size="small"

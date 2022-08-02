@@ -21,7 +21,10 @@ export default withSession(async function read(req, res) {
       take: Number(take),
       skip: Number(skip),
 
-      filter,
+      filter: {
+        ...filter,
+        ...(filter?.search ? { OR: filter.search.OR, search: undefined } : {}),
+      },
 
       orderBy,
       order,

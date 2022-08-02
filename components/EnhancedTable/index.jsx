@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import {
   Box,
@@ -22,7 +22,7 @@ export default function EnhancedTable({ title, type, cells, filter }) {
   const [orderBy, setOrderBy] = useState("id");
   const [order, setOrder] = useState("asc");
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selected, setSelected] = useState([]);
 
   const [rows, setRows] = useState([]);
@@ -30,28 +30,35 @@ export default function EnhancedTable({ title, type, cells, filter }) {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchRows = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const res = await axios.post("/api/" + type + "/read", {
-        take: rowsPerPage,
-        skip: page * rowsPerPage,
-        orderBy,
-        order,
-        filter: cleanObj(filter),
-      });
-      setRows(res.data);
+  const timeout = useRef();
 
-      // console.log(res.data);
+  const fetchRows = useCallback(() => {
+    if (timeout.current) clearTimeout(timeout.current);
 
-      const c = await axios.post("/api/" + type + "/count", {
-        filter: cleanObj(filter),
-      });
-      setCount(c.data.count);
-    } catch (err) {
-      console.error(err);
-    }
-    setIsLoading(false);
+    timeout.current = setTimeout(async () => {
+      setIsLoading(true);
+      try {
+        const res = await axios.post("/api/" + type + "/read", {
+          take: rowsPerPage,
+          skip: page * rowsPerPage,
+          orderBy,
+          order,
+          filter: cleanObj(filter),
+        });
+        setRows(res.data);
+
+        // console.log(res.data);
+
+        const c = await axios.post("/api/" + type + "/count", {
+          filter: cleanObj(filter),
+        });
+        setCount(c.data.count);
+      } catch (err) {
+        console.error(err);
+      }
+
+      setIsLoading(false);
+    }, 500);
   }, [type, order, orderBy, page, rowsPerPage, filter]);
 
   useEffect(() => {
