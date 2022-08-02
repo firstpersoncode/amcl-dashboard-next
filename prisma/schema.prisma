@@ -157,7 +157,7 @@ model qrcode {
   
   owner    participant   @relation(fields: [ownerId], references: [id])
   ownerId  String @db.ObjectId @unique
-  
+  scanned   Boolean @default(false)
   scannedAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

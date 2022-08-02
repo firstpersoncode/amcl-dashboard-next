@@ -31,7 +31,7 @@ export default function School({ detail, onClose, fetchRows }) {
     (async () => {
       setIsLoading(true);
       try {
-        const res = await axios.post("/api/school/read", { id: detail });
+        const res = await axios.post("/api/school/read", { idString: detail });
         if (res?.data) {
           setStartValues(res.data);
           setValues(res.data);
@@ -85,7 +85,7 @@ export default function School({ detail, onClose, fetchRows }) {
     setIsLoading(true);
     try {
       await axios.post("/api/school/update", {
-        id: detail,
+        idString: detail,
         school: data,
       });
     } catch (err) {
@@ -113,7 +113,7 @@ export default function School({ detail, onClose, fetchRows }) {
     setIsLoading(true);
     try {
       await axios.post("/api/school/archive", {
-        id: detail,
+        idString: detail,
       });
     } catch (err) {
       console.error(err);

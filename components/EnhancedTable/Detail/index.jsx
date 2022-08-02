@@ -4,6 +4,7 @@ import useIsMobile from "hooks/useIsMobile";
 const componentDetails = {
   school: require("./School").default,
   participant: require("./Participant").default,
+  qrcode: require("./Scanned").default,
 };
 
 export default function Detail({ open, type, detail, onClose, fetchRows }) {

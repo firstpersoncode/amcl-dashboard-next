@@ -4,9 +4,9 @@ import { getAllSchools, getSchool } from "prisma/services/school";
 export default withSession(async function read(req, res) {
   if (req.method !== "POST") return res.status(404).send("Not found");
 
-  const { id } = req.body;
-  if (id) {
-    const school = await getSchool(id);
+  const { idString } = req.body;
+  if (idString) {
+    const school = await getSchool(idString);
     res.status(200).json(school);
   } else {
     const { take, skip, orderBy, order, filter } = req.body;

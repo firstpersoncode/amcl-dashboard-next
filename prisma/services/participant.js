@@ -36,9 +36,9 @@ module.exports.getAllParticipants = async ({
   return participants;
 };
 
-module.exports.getParticipant = async (id) => {
+module.exports.getParticipant = async (idString) => {
   const participant = await client.participant.findFirst({
-    where: { id },
+    where: { idString },
     select: {
       id: true,
       idString: true,
@@ -72,7 +72,7 @@ module.exports.getParticipant = async (id) => {
       },
       school: {
         select: {
-          id: true,
+          idString: true,
           name: true,
           category: true,
           branch: true,
@@ -103,10 +103,10 @@ module.exports.createParticipant = async (data) => {
 };
 
 // UPDATE
-module.exports.updateParticipant = async (id, updateData) => {
+module.exports.updateParticipant = async (idString, updateData) => {
   const participant = await client.participant.update({
     where: {
-      id,
+      idString,
     },
     data: updateData,
   });
@@ -119,10 +119,10 @@ module.exports.deleteParticipants = async () => {
   return participants;
 };
 
-module.exports.deleteParticipant = async (id) => {
+module.exports.deleteParticipant = async (idString) => {
   const participant = await client.participant.delete({
     where: {
-      id,
+      idString,
     },
   });
   return participant;
@@ -140,10 +140,10 @@ module.exports.archiveParticipants = async (schoolId) => {
   return participants;
 };
 
-module.exports.archiveParticipant = async (id) => {
+module.exports.archiveParticipant = async (idString) => {
   const participant = await client.participant.update({
     where: {
-      id,
+      idString,
     },
     data: {
       archived: true,

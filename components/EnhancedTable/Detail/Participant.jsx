@@ -14,13 +14,14 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Close } from "@mui/icons-material";
+import { Close, TaskAlt } from "@mui/icons-material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { QRCodeSVG } from "qrcode.react";
 import axios from "axios";
 import Uploader from "components/Uploader";
 import Loader from "../Loader";
+import { format } from "date-fns";
 
 export default function Participant({ detail, onClose, fetchRows }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +36,9 @@ export default function Participant({ detail, onClose, fetchRows }) {
     (async () => {
       setIsLoading(true);
       try {
-        const res = await axios.post("/api/participant/read", { id: detail });
+        const res = await axios.post("/api/participant/read", {
+          idString: detail,
+        });
         if (res?.data) {
           setStartValues(res.data);
           setValues(res.data);
@@ -87,7 +90,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
     setIsLoading(true);
     try {
       await axios.post("/api/participant/update", {
-        id: detail,
+        idString: detail,
         participant: data,
       });
     } catch (err) {
@@ -115,7 +118,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
     setIsLoading(true);
     try {
       await axios.post("/api/participant/archive", {
-        id: detail,
+        idString: detail,
       });
     } catch (err) {
       console.error(err);
@@ -157,13 +160,29 @@ export default function Participant({ detail, onClose, fetchRows }) {
             <Typography variant="h3">{startValues.name}</Typography>
             <Typography fontSize="small">{startValues.idString}</Typography>
           </Box>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box>
             {startValues.qrcode?.idString && (
-              <Button size="small" variant="contained" onClick={toggleQRCode}>
-                QR Code
+              <Button
+                disabled={startValues.qrcode.scannedAt}
+                size="small"
+                variant="contained"
+                onClick={toggleQRCode}
+              >
+                {startValues.qrcode.scannedAt && (
+                  <TaskAlt color="success" sx={{ mr: 2 }} />
+                )}
+                <Typography>QR Code</Typography>
               </Button>
             )}
-            {startValues.qrcode?.scannedAt}
+
+            {startValues.qrcode?.scannedAt && (
+              <Typography sx={{ fontSize: "10px" }}>
+                {format(
+                  new Date(startValues.qrcode.scannedAt),
+                  "dd/MM/yyyy | hh:mm"
+                )}
+              </Typography>
+            )}
           </Box>
         </Box>
         <IconButton
@@ -361,9 +380,17 @@ export default function Participant({ detail, onClose, fetchRows }) {
             </Grid>
 
             <Grid item sm={5} xs={12}>
-              <Uploader type="avatar" value={fileAvatar} ownerId={detail} />
+              <Uploader
+                type="avatar"
+                value={fileAvatar}
+                ownerId={startValues.id}
+              />
               {isOfficial && (
-                <Uploader type="license" value={fileLicense} ownerId={detail} />
+                <Uploader
+                  type="license"
+                  value={fileLicense}
+                  ownerId={startValues.id}
+                />
               )}
 
               <Card sx={{ mt: 4 }}>
@@ -375,11 +402,11 @@ export default function Participant({ detail, onClose, fetchRows }) {
                     select
                     name="school"
                     label="Sekolah"
-                    value={valuesSchool.id || ""}
+                    value={valuesSchool.idString || ""}
                     InputLabelProps={{ shrink: true }}
                     inputProps={{ readOnly: true }}
                   >
-                    <MenuItem value={valuesSchool.id || ""}>
+                    <MenuItem value={valuesSchool.idString || ""}>
                       {valuesSchool.name}
                     </MenuItem>
                   </TextField>

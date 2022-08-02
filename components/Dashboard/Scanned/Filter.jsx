@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Grid,
   InputAdornment,
@@ -8,8 +9,31 @@ import {
 import { Search } from "@mui/icons-material";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import axios from "axios";
+import Loader from "./Loader";
 
-export default function Filter({ filter, onChangeFilter }) {
+export default function Filter({
+  filterSchool,
+  onChangeFilterSchool,
+  filter,
+  onChangeFilter,
+}) {
+  const [schoolOptions, setSchoolOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      setIsLoading(true);
+      try {
+        const res = await axios.get("/api/school/names");
+        if (res?.data) setSchoolOptions(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+      setIsLoading(false);
+    })();
+  }, []);
+
   return (
     <Paper sx={{ padding: 2 }}>
       <Grid container spacing={2}>
@@ -29,6 +53,53 @@ export default function Filter({ filter, onChangeFilter }) {
               ),
             }}
           />
+        </Grid>
+
+        <Grid item xs={6}>
+          <TextField
+            size="small"
+            fullWidth
+            select
+            label="Sekolah"
+            value={filterSchool.name || ""}
+            onChange={onChangeFilterSchool("name")}
+          >
+            <MenuItem value="">Semua</MenuItem>
+            {isLoading ? (
+              <MenuItem value="">
+                <Loader />
+              </MenuItem>
+            ) : (
+              schoolOptions
+                .map((school) => ({ value: school.name, label: school.name }))
+                .map((option, i) => (
+                  <MenuItem key={i} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))
+            )}
+          </TextField>
+        </Grid>
+
+        <Grid item xs={6}>
+          <TextField
+            size="small"
+            fullWidth
+            select
+            label="Cabang"
+            value={filterSchool.branch || ""}
+            onChange={onChangeFilterSchool("branch")}
+          >
+            <MenuItem value="">Semua</MenuItem>
+            {[
+              { value: "futsal", label: "Futsal" },
+              { value: "dance", label: "Dance" },
+            ].map((option, i) => (
+              <MenuItem key={i} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
         </Grid>
 
         <Grid item xs={6}>

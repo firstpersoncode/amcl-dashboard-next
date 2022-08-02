@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Box,
+  Button,
   Dialog,
   DialogContent,
   IconButton,
@@ -11,6 +12,7 @@ import { Cameraswitch, Input, CenterFocusStrong } from "@mui/icons-material";
 import { QrReader } from "react-qr-reader";
 import axios from "axios";
 import Loader from "./Loader";
+import Participant from "./Participant";
 
 export default function QRScanner({ open, onClose }) {
   const [processing, setProcessing] = useState(false);
@@ -46,31 +48,52 @@ export default function QRScanner({ open, onClose }) {
   const toggleQRCodeDetail = () => {
     setOpenQRCodeDetail(!openQRCodeDetail);
   };
-  const [qrcodeDetail, setQRCodeDetail] = useState();
-
-  const fetchQRDetail = async (idString) => {
+  const [qrcodeDetail, setQRCodeDetail] = useState({});
+  const [message, setMessage] = useState("");
+  const [openMessage, setOpenMessage] = useState(false);
+  const toggleOpenMessage = () => {
+    setOpenMessage(!openMessage);
+  };
+  const scanQRDetail = async (idString) => {
     setProcessing(true);
+    setMessage("");
     try {
-      const res = await axios.post("/api/qrcode/read", { idString });
-      setQRCodeDetail(res.data);
-      toggleQRCodeDetail();
+      const res = await axios.post("/api/qrcode/scan", { idString });
+
+      if (res.data) {
+        setQRCodeDetail(res.data);
+        toggleQRCodeDetail();
+      }
     } catch (err) {
       console.error(err);
+      if (err.response?.data) {
+        setMessage(err.response.data);
+        setOpenMessage(true);
+      }
     }
     setProcessing(false);
   };
 
-  const handleQrScan = (result, error) => {
+  const handleQRScan = (result, error) => {
     if (processing) return;
 
     if (result) {
       const idString = result.text;
-      fetchQRDetail(idString);
+      scanQRDetail(idString);
     }
 
     if (error) {
       console.info(error);
     }
+  };
+
+  const [qrText, setQRText] = useState("");
+  const handleQRTextChange = (e) => {
+    setQRText(e.target.value);
+  };
+  const handleQRTextSubmit = (e) => {
+    e.preventDefault();
+    scanQRDetail(qrText);
   };
 
   const handleClose = () => {
@@ -115,7 +138,7 @@ export default function QRScanner({ open, onClose }) {
             key={facingMode}
             videoId="qrScanner"
             scanDelay={500}
-            onResult={handleQrScan}
+            onResult={handleQRScan}
             constraints={{ facingMode }}
             videoContainerStyle={{
               width: "100vw",
@@ -124,19 +147,42 @@ export default function QRScanner({ open, onClose }) {
         </Box>
       ) : (
         <Box sx={{ padding: 4 }}>
-          <TextField
-            variant="standard"
-            name="qrcode"
-            label="QR Code"
-            fullWidth
-          />
+          <form onSubmit={handleQRTextSubmit}>
+            <TextField
+              variant="standard"
+              name="qrcode"
+              label="QR Code"
+              fullWidth
+              value={qrText}
+              onChange={handleQRTextChange}
+            />
+            <Box sx={{ textAlign: "right", mt: 2 }}>
+              <Button
+                variant="contained"
+                type="submit"
+                onClick={handleQRTextSubmit}
+              >
+                Submit
+              </Button>
+            </Box>
+          </form>
         </Box>
       )}
 
-      <Dialog open={openQRCodeDetail} onClose={toggleQRCodeDetail}>
-        <DialogContent>
-          <pre>{JSON.stringify(qrcodeDetail, null, 4)}</pre>
-        </DialogContent>
+      <Dialog
+        fullWidth
+        maxWidth="md"
+        open={openQRCodeDetail}
+        onClose={toggleQRCodeDetail}
+      >
+        <Participant
+          participant={qrcodeDetail.owner}
+          onClose={toggleQRCodeDetail}
+        />
+      </Dialog>
+
+      <Dialog open={openMessage} onClose={toggleOpenMessage}>
+        <DialogContent>{message}</DialogContent>
       </Dialog>
 
       {processing && <Loader />}

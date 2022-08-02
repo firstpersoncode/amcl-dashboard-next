@@ -73,7 +73,7 @@ export default function EnhancedTable({ title, type, cells, filter }) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.id);
+      const newSelecteds = rows.map((n) => n.idString);
       setSelected(newSelecteds);
       return;
     }
@@ -163,14 +163,14 @@ export default function EnhancedTable({ title, type, cells, filter }) {
               />
               <TableBody>
                 {rows.map((row, index) => {
-                  const isItemSelected = isSelected(row.id);
+                  const isItemSelected = isSelected(row.idString);
 
                   return (
                     <TableRow
                       sx={{ opacity: row.archived ? "0.5" : "1" }}
                       key={index}
                       hover
-                      onClick={(event) => handleClick(event, row.id)}
+                      onClick={(event) => handleClick(event, row.idString)}
                       role="checkbox"
                       tabIndex={-1}
                       selected={isItemSelected}
@@ -194,7 +194,7 @@ export default function EnhancedTable({ title, type, cells, filter }) {
                         <Button
                           size="small"
                           color="primary"
-                          onClick={handleSelectDetail(row.id)}
+                          onClick={handleSelectDetail(row.idString)}
                         >
                           Detail
                         </Button>

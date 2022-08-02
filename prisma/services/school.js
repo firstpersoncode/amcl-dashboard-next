@@ -47,9 +47,9 @@ module.exports.getAllSchools = async ({
   return schools;
 };
 
-module.exports.getSchool = async (id) => {
+module.exports.getSchool = async (idString) => {
   const school = await client.school.findFirst({
-    where: { id },
+    where: { idString },
     select: {
       id: true,
       idString: true,
@@ -66,6 +66,7 @@ module.exports.getSchool = async (id) => {
       participants: {
         select: {
           id: true,
+          idString: true,
           name: true,
           email: true,
           dob: true,
@@ -104,10 +105,10 @@ module.exports.createSchool = async (data) => {
 };
 
 // UPDATE
-module.exports.updateSchool = async (id, updateData) => {
+module.exports.updateSchool = async (idString, updateData) => {
   const school = await client.school.update({
     where: {
-      id,
+      idString,
     },
     data: updateData,
   });
@@ -120,19 +121,19 @@ module.exports.deleteSchools = async () => {
   return schools;
 };
 
-module.exports.deleteSchool = async (id) => {
+module.exports.deleteSchool = async (idString) => {
   const school = await client.school.delete({
     where: {
-      id,
+      idString,
     },
   });
   return school;
 };
 
-module.exports.archiveSchool = async (id) => {
+module.exports.archiveSchool = async (idString) => {
   const school = await client.school.update({
     where: {
-      id,
+      idString,
     },
     data: {
       archived: true,

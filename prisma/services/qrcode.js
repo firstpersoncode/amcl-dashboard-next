@@ -10,6 +10,7 @@ module.exports.getAllQRcodes = async ({
 }) => {
   const qrcodes = await client.qrcode.findMany({
     where: {
+      scanned: true,
       // ...(!filter?.scannedAt ? { scannedAt: { gte: new Date() } } : {}),
       ...filter,
       ...(filter && Object.keys(filter).length ? filter : {}),
@@ -42,16 +43,83 @@ module.exports.getAllQRcodes = async ({
 
 module.exports.getQRcode = async (idString) => {
   const qrcode = await client.qrcode.findFirst({
-    where: { idString },
+    where: {
+      idString,
+      scanned: true,
+    },
     select: {
       id: true,
       idString: true,
+      scanned: true,
       owner: {
         select: {
+          id: true,
+          idString: true,
           name: true,
           email: true,
+          phone: true,
+          dob: true,
+          gender: true,
+          type: true,
+          studentId: true,
+          class: true,
+          futsalPosition: true,
+          officialPosition: true,
+          instagram: true,
           school: {
             select: {
+              idString: true,
+              name: true,
+              category: true,
+              branch: true,
+              password: false,
+            },
+          },
+          files: {
+            select: {
+              type: true,
+              name: true,
+              url: true,
+            },
+          },
+        },
+      },
+      scannedAt: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+  return qrcode;
+};
+
+module.exports.getValidQRcode = async (idString) => {
+  const qrcode = await client.qrcode.findFirst({
+    where: {
+      idString,
+      scanned: false,
+    },
+    select: {
+      id: true,
+      idString: true,
+      scanned: true,
+      owner: {
+        select: {
+          id: true,
+          idString: true,
+          name: true,
+          email: true,
+          phone: true,
+          dob: true,
+          gender: true,
+          type: true,
+          studentId: true,
+          class: true,
+          futsalPosition: true,
+          officialPosition: true,
+          instagram: true,
+          school: {
+            select: {
+              idString: true,
               name: true,
               category: true,
               branch: true,
@@ -76,7 +144,13 @@ module.exports.getQRcode = async (idString) => {
 };
 
 module.exports.countQRCodes = async ({ filter }) => {
-  const count = await client.qrcode.count();
+  const count = await client.qrcode.count({
+    where: {
+      // ...(!filter?.scannedAt ? { scannedAt: { gte: new Date() } } : {}),
+      ...filter,
+      ...(filter && Object.keys(filter).length ? filter : {}),
+    },
+  });
   return count;
 };
 
@@ -89,12 +163,25 @@ module.exports.createQRcode = async (data) => {
 };
 
 // UPDATE
-module.exports.updateQRcode = async (id, updateData) => {
+module.exports.updateQRcode = async (idString, updateData) => {
   const qrcode = await client.qrcode.update({
     where: {
-      id,
+      idString,
     },
     data: updateData,
+  });
+  return qrcode;
+};
+
+module.exports.scanQRCode = async (idString) => {
+  const qrcode = await client.qrcode.update({
+    where: {
+      idString,
+    },
+    data: {
+      scanned: true,
+      scannedAt: new Date(),
+    },
   });
   return qrcode;
 };
@@ -105,10 +192,10 @@ module.exports.deleteQRcodes = async () => {
   return qrcodes;
 };
 
-module.exports.deleteQRcode = async (id) => {
+module.exports.deleteQRcode = async (idString) => {
   const qrcode = await client.qrcode.delete({
     where: {
-      id,
+      idString,
     },
   });
   return qrcode;

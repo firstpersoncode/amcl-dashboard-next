@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { format } from "date-fns";
+import { format, startOfToday } from "date-fns";
 import EnhancedTable from "components/EnhancedTable";
 import Filter from "./Filter";
 
 export default function Scanned() {
-  const [filter, setFilter] = useState({ scannedAt: { gte: new Date() } });
+  const [filter, setFilter] = useState({ scannedAt: { gte: startOfToday() } });
 
   const onChangeFilter = (name) => (e) => {
     if (name === "search") {
@@ -45,18 +45,33 @@ export default function Scanned() {
       }));
   };
 
+  const [filterSchool, setFilterSchool] = useState({});
+
+  const onChangeFilterSchool = (name) => (e) => {
+    setFilterSchool((v) => ({ ...v, [name]: e.target.value }));
+  };
+
   return (
     <>
-      <Filter filter={filter} onChangeFilter={onChangeFilter} />
+      <Filter
+        filter={filter}
+        onChangeFilter={onChangeFilter}
+        filterSchool={filterSchool}
+        onChangeFilterSchool={onChangeFilterSchool}
+      />
 
       <EnhancedTable
         title="Kehadiran"
         type="qrcode"
         cells={[
-          "idString",
+          (row) => ({
+            id: "idString",
+            label: "ID",
+            value: row?.idString,
+          }),
           (row) => ({
             id: "scannedAt",
-            label: "Discan",
+            label: "Scan",
             value:
               row?.scannedAt &&
               format(new Date(row.scannedAt), "dd MMM yyyy - HH:mm"),
@@ -76,7 +91,7 @@ export default function Scanned() {
               format(new Date(row.updatedAt), "dd MMM yyyy - HH:mm"),
           }),
         ]}
-        filter={filter}
+        filter={{ ...filter, owner: { school: { ...filterSchool } } }}
       />
     </>
   );
