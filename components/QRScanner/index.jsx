@@ -8,7 +8,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { Cameraswitch, Input, CenterFocusStrong } from "@mui/icons-material";
+import { Cameraswitch, ChangeCircle } from "@mui/icons-material";
 import { QrReader } from "react-qr-reader";
 import axios from "axios";
 import Loader from "./Loader";
@@ -118,7 +118,7 @@ export default function QRScanner({ open, onClose }) {
         }}
       >
         <IconButton onClick={handleToggleInputMode}>
-          {inputMode === "scan" ? <Input /> : <CenterFocusStrong />}
+          <ChangeCircle />
         </IconButton>
         <IconButton
           disabled={inputMode !== "scan"}

@@ -9,8 +9,14 @@ import {
   ListItemText,
   SwipeableDrawer,
   Toolbar,
+  Typography,
 } from "@mui/material";
-import { Inbox, Mail } from "@mui/icons-material";
+import {
+  LabelImportant,
+  Person,
+  Settings,
+  QrCodeScanner,
+} from "@mui/icons-material";
 import useIsMobile from "hooks/useIsMobile";
 
 export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
@@ -23,6 +29,7 @@ export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
       variant={isMobile ? "temporary" : "persistent"}
       anchor="left"
       sx={{
+        position: "relative",
         width: drawerWidth,
         flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
@@ -41,7 +48,7 @@ export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
             <Link href="/school" passHref>
               <ListItemButton component="a">
                 <ListItemIcon>
-                  <Mail />
+                  <LabelImportant />
                 </ListItemIcon>
 
                 <ListItemText primary="Sekolah" />
@@ -53,7 +60,7 @@ export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
             <Link href="/participant" passHref>
               <ListItemButton component="a">
                 <ListItemIcon>
-                  <Mail />
+                  <Person />
                 </ListItemIcon>
 
                 <ListItemText primary="Peserta" />
@@ -65,7 +72,7 @@ export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
             <Link href="/scanned" passHref>
               <ListItemButton component="a">
                 <ListItemIcon>
-                  <Inbox />
+                  <QrCodeScanner />
                 </ListItemIcon>
 
                 <ListItemText primary="Kehadiran" />
@@ -79,7 +86,7 @@ export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
             <Link href="/admin" passHref>
               <ListItemButton component="a">
                 <ListItemIcon>
-                  <Inbox />
+                  <Settings />
                 </ListItemIcon>
 
                 <ListItemText primary="Admin" />
@@ -88,6 +95,25 @@ export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
           </ListItem>
         </List>
       </Box>
+      <Typography
+        sx={{
+          position: "absolute",
+          bottom: 16,
+          left: 16,
+          fontSize: "10px",
+        }}
+      >
+        AMCL Dashboard v 0.0.1
+        <Divider sx={{ my: 1 }} />
+        By{" "}
+        <a
+          href="https://github.com/firstpersoncode"
+          target="_blank"
+          rel="noreferrer"
+        >
+          @firstpersoncode
+        </a>
+      </Typography>
     </SwipeableDrawer>
   );
 }

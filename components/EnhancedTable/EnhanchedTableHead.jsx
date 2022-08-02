@@ -1,18 +1,17 @@
 import {
   Button,
-  Checkbox,
+  IconButton,
   TableCell,
   TableHead,
   TableRow,
   TableSortLabel,
 } from "@mui/material";
 
+import { Add } from "@mui/icons-material";
+
 export default function EnhancedTableHead({
-  onSelectAllClick,
   order,
   orderBy,
-  numSelected,
-  rowCount,
   onRequestSort,
   headCells,
 }) {
@@ -23,14 +22,6 @@ export default function EnhancedTableHead({
   return (
     <TableHead>
       <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-          />
-        </TableCell>
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
@@ -47,9 +38,9 @@ export default function EnhancedTableHead({
           </TableCell>
         ))}
         <TableCell align="right">
-          <Button size="small" color="primary">
-            Tambah
-          </Button>
+          <IconButton size="small" color="primary">
+            <Add />
+          </IconButton>
         </TableCell>
       </TableRow>
     </TableHead>

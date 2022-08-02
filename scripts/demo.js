@@ -20,7 +20,7 @@ function generateUID() {
   let secondPart = (Math.random() * 46656) | 0;
   firstPart = ("0000" + firstPart.toString(36)).slice(-4);
   secondPart = ("0000" + secondPart.toString(36)).slice(-4);
-  return firstPart + secondPart;
+  return (firstPart + secondPart).toUpperCase();
 }
 
 function generateRandom(min = 0, max = 100) {
@@ -143,7 +143,7 @@ async function generateQRCodes() {
   const schools = await getAllSchools({ include: { participants: true } });
   for (const school of schools) {
     console.log(`switch ${school.name}'s completed status to 'true'`);
-    await updateSchool(school.id, { completed: true });
+    await updateSchool(school.idString, { completed: true });
 
     const { participants } = school;
     for (const participant of participants) {

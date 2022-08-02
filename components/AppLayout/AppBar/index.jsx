@@ -2,16 +2,19 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import {
   AppBar as MuiAppBar,
-  Button,
+  Box,
   IconButton,
   Toolbar,
   Typography,
 } from "@mui/material";
-import { Menu } from "@mui/icons-material";
+import { Menu, Logout } from "@mui/icons-material";
 import axios from "axios";
 import Loader from "./Loader";
+import Image from "next/image";
+import useIsMobile from "hooks/useIsMobile";
 
 export default function AppBar({ onToggleDrawer }) {
+  const isMobile = useIsMobile();
   const { replace } = useRouter();
   const handleLogout = async () => {
     await axios.get("/api/admin/logout");
@@ -28,15 +31,33 @@ export default function AppBar({ onToggleDrawer }) {
           <Menu />
         </IconButton>
 
-        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-          <Link href="/" passHref>
-            <a>Makassar Champion League</a>
+        <Box
+          sx={{
+            flexGrow: 1,
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            justifyContent: isMobile ? "center" : "flex-start",
+          }}
+        >
+          <Link href="/">
+            <a>
+              <Image width={30} height={40} src="/logo-md.png" alt="Logo" />
+            </a>
           </Link>
-        </Typography>
 
-        <Button size="small" onClick={handleLogout}>
-          Keluar
-        </Button>
+          {!isMobile && (
+            <Link href="/" passHref>
+              <a>
+                <Typography variant="h5">Makassar Champion League</Typography>
+              </a>
+            </Link>
+          )}
+        </Box>
+
+        <IconButton size="small" onClick={handleLogout}>
+          <Logout />
+        </IconButton>
       </Toolbar>
       <Loader />
     </MuiAppBar>

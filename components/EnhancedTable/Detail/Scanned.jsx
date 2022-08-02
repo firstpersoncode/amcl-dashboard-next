@@ -31,7 +31,7 @@ export default function Scanned({ detail, onClose }) {
         });
         if (res?.data) {
           setOwner(res.data.owner);
-        }
+        } else setOwner({});
       } catch (err) {
         console.error(err);
       }
@@ -54,8 +54,7 @@ export default function Scanned({ detail, onClose }) {
     <>
       {isLoading && <Loader />}
       <DialogTitle>
-        <Typography variant="h3">{owner.name}</Typography>
-        <Typography fontSize="small">{owner.idString}</Typography>
+        <Typography variant="h5">{owner.idString}</Typography>
         <IconButton
           onClick={onClose}
           sx={{

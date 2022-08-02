@@ -23,7 +23,6 @@ export default function EnhancedTable({ title, type, cells, filter }) {
   const [order, setOrder] = useState("desc");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [selected, setSelected] = useState([]);
 
   const [rows, setRows] = useState([]);
   const [count, setCount] = useState(0);
@@ -71,35 +70,6 @@ export default function EnhancedTable({ title, type, cells, filter }) {
     setOrderBy(property);
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.idString);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-
-    setSelected(newSelected);
-  };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -108,8 +78,6 @@ export default function EnhancedTable({ title, type, cells, filter }) {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
-  const isSelected = (id) => selected.indexOf(id) !== -1;
 
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - count) : 0;
@@ -131,7 +99,6 @@ export default function EnhancedTable({ title, type, cells, filter }) {
         <Paper sx={{ width: "100%", mb: 2 }}>
           {isLoading && <Loader />}
           <EnhancedTableToolbar
-            numSelected={selected.length}
             title={title}
             count={count}
             fetchRows={fetchRows}
@@ -139,10 +106,8 @@ export default function EnhancedTable({ title, type, cells, filter }) {
           <TableContainer>
             <Table sx={{ minWidth: 750 }} size="medium">
               <EnhancedTableHead
-                numSelected={selected.length}
                 order={order}
                 orderBy={orderBy}
-                onSelectAllClick={handleSelectAllClick}
                 onRequestSort={handleRequestSort}
                 rowCount={count}
                 headCells={cells.map((cell) => {
@@ -163,21 +128,18 @@ export default function EnhancedTable({ title, type, cells, filter }) {
               />
               <TableBody>
                 {rows.map((row, index) => {
-                  const isItemSelected = isSelected(row.idString);
-
                   return (
                     <TableRow
-                      sx={{ opacity: row.archived ? "0.5" : "1" }}
+                      sx={{
+                        opacity: row.archived ? "0.5" : "1",
+                        cursor: "pointer",
+                      }}
                       key={index}
                       hover
-                      onClick={(event) => handleClick(event, row.idString)}
+                      onClick={handleSelectDetail(row.idString)}
                       role="checkbox"
                       tabIndex={-1}
-                      selected={isItemSelected}
                     >
-                      <TableCell padding="checkbox">
-                        <Checkbox color="primary" checked={isItemSelected} />
-                      </TableCell>
                       {cells.map((cell, i) => {
                         if (typeof cell === "function")
                           return (

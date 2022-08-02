@@ -23,55 +23,26 @@ import Uploader from "components/Uploader";
 import Loader from "../Loader";
 import { format } from "date-fns";
 
-export default function Participant({ detail, onClose, fetchRows }) {
+export default function Participant({ onClose, fetchRows }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [startValues, setStartValues] = useState({});
   const [values, setValues] = useState({});
-  const [errors, setErrors] = useState({});
-  const [isDirty, setIsDirty] = useState(false);
-
   const [valuesSchool, setValuesSchool] = useState({});
-
-  useEffect(() => {
-    (async () => {
-      setIsLoading(true);
-      try {
-        const res = await axios.post("/api/participant/read", {
-          idString: detail,
-        });
-        if (res?.data) {
-          setStartValues(res.data);
-          setValues(res.data);
-        }
-        if (res?.data.school) setValuesSchool(res.data.school);
-      } catch (err) {
-        console.error(err);
-      }
-      setIsLoading(false);
-    })();
-  }, [detail]);
+  const [errors, setErrors] = useState({});
 
   const handleChange = (name) => (e) => {
     setValues((v) => ({ ...v, [name]: e.target.value }));
     setErrors((v) => ({ ...v, [name]: undefined }));
   };
 
-  useEffect(() => {
-    let dirty = false;
-    for (const field in startValues) {
-      if (startValues[field] !== values[field]) {
-        dirty = true;
-        break;
-      }
-    }
-    setIsDirty(dirty);
-  }, [values, startValues]);
+  const handleChangeSchool = (name) => (e) => {
+    setValuesSchool((v) => ({ ...v, [name]: e.target.value }));
+    setErrors((v) => ({ ...v, [name]: undefined }));
+  };
 
   const [openConfirm, setOpenConfirm] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!isDirty) return;
     setOpenConfirm(true);
   };
 
@@ -79,58 +50,23 @@ export default function Participant({ detail, onClose, fetchRows }) {
     setOpenConfirm(false);
   };
 
-  const handleUpdate = async () => {
-    const data = {};
-    for (const field in startValues) {
-      if (startValues[field] !== values[field]) {
-        data[field] = values[field];
-      }
-    }
-
+  const handleCreate = async () => {
     setIsLoading(true);
     try {
-      await axios.post("/api/participant/update", {
-        idString: detail,
-        participant: data,
+      await axios.post("/api/participant/create", {
+        participant: values,
       });
     } catch (err) {
       console.error(err);
     }
     setIsLoading(false);
     closeConfirm();
-    setStartValues({ ...startValues, ...data });
-    setIsDirty(false);
     fetchRows();
-  };
-
-  const [openConfirmArchive, setOpenConfirmArchive] = useState(false);
-
-  const handleSubmitArchive = (e) => {
-    e.preventDefault();
-    setOpenConfirmArchive(true);
-  };
-
-  const closeConfirmArchive = () => {
-    setOpenConfirmArchive(false);
-  };
-
-  const handleArchive = async () => {
-    setIsLoading(true);
-    try {
-      await axios.post("/api/participant/archive", {
-        idString: detail,
-      });
-    } catch (err) {
-      console.error(err);
-    }
-    setIsLoading(false);
-    closeConfirmArchive();
     onClose();
-    fetchRows();
   };
 
-  const isOfficial = startValues.type === "official";
-  const isStudent = startValues.type === "student";
+  const isOfficial = values.type === "official";
+  const isStudent = values.type === "student";
   const isFutsal = valuesSchool.branch === "futsal";
 
   const fileAvatar =
@@ -140,40 +76,11 @@ export default function Participant({ detail, onClose, fetchRows }) {
     values.files?.length &&
     values.files.find((file) => file.type === "license");
 
-  const [openQRCode, setOpenQRCode] = useState(false);
-  const toggleQRCode = () => {
-    setOpenQRCode(!openQRCode);
-  };
-
   return (
     <>
       {isLoading && <Loader />}
       <DialogTitle>
-        <Typography variant="h5">{detail}</Typography>
-        <Box>
-          {startValues.qrcode?.idString && (
-            <Button
-              disabled={startValues.qrcode.scannedAt}
-              size="small"
-              variant="contained"
-              onClick={toggleQRCode}
-            >
-              {startValues.qrcode.scannedAt && (
-                <TaskAlt color="success" sx={{ mr: 2 }} />
-              )}
-              {startValues.qrcode?.scannedAt ? (
-                <Typography>
-                  {format(
-                    new Date(startValues.qrcode.scannedAt),
-                    "dd/MM/yyyy | hh:mm"
-                  )}
-                </Typography>
-              ) : (
-                <Typography>QR Code</Typography>
-              )}
-            </Button>
-          )}
-        </Box>
+        <Typography>Peserta</Typography>
         <IconButton
           onClick={onClose}
           sx={{
@@ -369,16 +276,12 @@ export default function Participant({ detail, onClose, fetchRows }) {
             </Grid>
 
             <Grid item sm={5} xs={12}>
-              <Uploader
-                type="avatar"
-                value={fileAvatar}
-                ownerId={startValues.id}
-              />
+              <Uploader type="avatar" value={fileAvatar} ownerId={values.id} />
               {isOfficial && (
                 <Uploader
                   type="license"
                   value={fileLicense}
-                  ownerId={startValues.id}
+                  ownerId={values.id}
                 />
               )}
 
@@ -393,7 +296,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
                     label="Sekolah"
                     value={valuesSchool.idString || ""}
                     InputLabelProps={{ shrink: true }}
-                    inputProps={{ readOnly: true }}
+                    onChange={handleChangeSchool("idString")}
                   >
                     <MenuItem value={valuesSchool.idString || ""}>
                       {valuesSchool.name}
@@ -409,7 +312,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
                     label="Kategori"
                     value={valuesSchool.category || ""}
                     InputLabelProps={{ shrink: true }}
-                    inputProps={{ readOnly: true }}
+                    onChange={handleChangeSchool("category")}
                   >
                     <MenuItem value="js">SMP</MenuItem>
                     <MenuItem value="hs">SMA</MenuItem>
@@ -425,7 +328,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
                     label="Cabang"
                     value={valuesSchool.branch || ""}
                     InputLabelProps={{ shrink: true }}
-                    inputProps={{ readOnly: true }}
+                    onChange={handleChangeSchool("branch")}
                   >
                     <MenuItem value="futsal">Futsal</MenuItem>
                     <MenuItem value="dance">Dance</MenuItem>
@@ -437,12 +340,22 @@ export default function Participant({ detail, onClose, fetchRows }) {
                     select
                     name="type"
                     label="Type"
-                    value={startValues.type || ""}
+                    value={values.type || ""}
                     InputLabelProps={{ shrink: true }}
-                    inputProps={{ readOnly: true }}
+                    onChange={handleChangeSchool("type")}
                   >
-                    <MenuItem value="student">Siswa/Siswi</MenuItem>
-                    <MenuItem value="scholar">Mahasiswa/Mahasiswi</MenuItem>
+                    <MenuItem
+                      disabled={valuesSchool.category === "univ"}
+                      value="student"
+                    >
+                      Siswa/Siswi
+                    </MenuItem>
+                    <MenuItem
+                      disabled={valuesSchool.category !== "univ"}
+                      value="scholar"
+                    >
+                      Mahasiswa/Mahasiswi
+                    </MenuItem>
                     <MenuItem value="official">Official</MenuItem>
                   </TextField>
                 </CardContent>
@@ -452,36 +365,11 @@ export default function Participant({ detail, onClose, fetchRows }) {
         </DialogContent>
 
         <DialogActions>
-          <Button disabled={isLoading} onClick={handleSubmitArchive}>
-            Hapus
-          </Button>
-          <Button
-            type="submit"
-            disabled={isLoading || !isDirty}
-            onClick={handleSubmit}
-          >
+          <Button type="submit" disabled={isLoading} onClick={handleSubmit}>
             Simpan
           </Button>
         </DialogActions>
       </form>
-
-      {startValues.qrcode?.idString && (
-        <Dialog open={openQRCode} onClose={toggleQRCode}>
-          <DialogContent sx={{ backgroundColor: "#FFF" }}>
-            <QRCodeSVG value={startValues.qrcode.idString} />
-          </DialogContent>
-        </Dialog>
-      )}
-
-      <Dialog open={openConfirmArchive} onClose={closeConfirmArchive}>
-        <DialogContent>
-          Apakah Anda yakin ingin menghapus data ini?
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeConfirmArchive}>Batal</Button>
-          <Button onClick={handleArchive}>Hapus</Button>
-        </DialogActions>
-      </Dialog>
 
       <Dialog open={openConfirm} onClose={closeConfirm}>
         <DialogContent>
@@ -489,7 +377,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
         </DialogContent>
         <DialogActions>
           <Button onClick={closeConfirm}>Batal</Button>
-          <Button onClick={handleUpdate}>Simpan</Button>
+          <Button onClick={handleCreate}>Simpan</Button>
         </DialogActions>
       </Dialog>
     </>

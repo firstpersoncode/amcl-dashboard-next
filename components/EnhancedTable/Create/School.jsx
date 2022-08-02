@@ -128,7 +128,8 @@ export default function School({ detail, onClose, fetchRows }) {
     <>
       {isLoading && <Loader />}
       <DialogTitle>
-        <Typography variant="h5">{detail}</Typography>
+        <Typography variant="h3">{startValues.name}</Typography>
+        <Typography fontSize="small">{detail}</Typography>
         <IconButton
           onClick={onClose}
           sx={{
