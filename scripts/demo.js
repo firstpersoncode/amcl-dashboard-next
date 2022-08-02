@@ -87,9 +87,7 @@ async function generateSchools() {
         phone: "01234567890",
         dob: new Date(),
         gender: j % 2 === 0 ? "female" : "male",
-        type: { js: "student", hs: "student", univ: "scholar" }[
-          school.category
-        ],
+        type: "participant",
         studentId: String(generateRandom(100, 999)),
         class:
           school.category !== "univ" ? String(generateRandom(0, 4)) : undefined,

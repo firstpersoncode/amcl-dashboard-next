@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import axios from "axios";
+import PasswordField from "components/PasswordField";
 import Loader from "../Loader";
 
 export default function School({ detail, onClose, fetchRows }) {
@@ -53,7 +54,7 @@ export default function School({ detail, onClose, fetchRows }) {
 
   useEffect(() => {
     let dirty = false;
-    for (const field in startValues) {
+    for (const field in { ...startValues, password: "" }) {
       if (startValues[field] !== values[field]) {
         dirty = true;
         break;
@@ -76,7 +77,7 @@ export default function School({ detail, onClose, fetchRows }) {
 
   const handleUpdate = async () => {
     const data = {};
-    for (const field in startValues) {
+    for (const field in { ...startValues, password: "" }) {
       if (startValues[field] !== values[field]) {
         data[field] = values[field];
       }
@@ -174,6 +175,12 @@ export default function School({ detail, onClose, fetchRows }) {
                 InputLabelProps={{ shrink: true }}
               />
 
+              <PasswordField
+                sx={{ mb: 2 }}
+                value={values.password || ""}
+                onChange={handleChange("password")}
+              />
+
               <TextField
                 required
                 sx={{ mb: 2 }}
@@ -241,8 +248,8 @@ export default function School({ detail, onClose, fetchRows }) {
               </Card>
             </Grid>
           </Grid>
-          {/* <pre>{JSON.stringify(values, null, 4)}</pre> */}
         </DialogContent>
+        {/* <pre>{JSON.stringify(values, null, 4)}</pre> */}
 
         <DialogActions>
           <Button disabled={isLoading} onClick={handleSubmitArchive}>

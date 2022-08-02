@@ -14,6 +14,7 @@ import {
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 import useForm from "./hooks/useForm";
 import Loader from "./Loader";
+import PasswordField from "components/PasswordField";
 
 export default function ModalLogin() {
   const {
@@ -61,18 +62,14 @@ export default function ModalLogin() {
                   name="email"
                   label="Email"
                   variant="standard"
-                  value={values.email}
+                  value={values.email || ""}
                   onChange={handleChange("email")}
                   error={Boolean(errors.email)}
                   helperText={errors.email}
                 />
-                <TextField
-                  fullWidth
-                  name="password"
-                  type="password"
-                  label="Password"
-                  variant="standard"
-                  value={values.password}
+
+                <PasswordField
+                  value={values.password || ""}
                   onChange={handleChange("password")}
                   error={Boolean(errors.password)}
                   helperText={errors.password}

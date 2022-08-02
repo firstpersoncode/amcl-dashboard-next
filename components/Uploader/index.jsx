@@ -1,20 +1,27 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Button,
   Card,
   CardActionArea,
-  CardActions,
-  CardContent,
   CardMedia,
   Dialog,
   DialogContent,
-  TextField,
+  FormControlLabel,
   Typography,
 } from "@mui/material";
+import { Upload } from "@mui/icons-material";
 import axios from "axios";
 import Loader from "./Loader";
 
-export default function Uploader({ type, value, ownerId }) {
+export default function Uploader({
+  label,
+  type,
+  value,
+  ownerId,
+  onChange,
+  onUpload,
+  submit,
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [saved, setSaved] = useState(false);
@@ -28,10 +35,12 @@ export default function Uploader({ type, value, ownerId }) {
       setSaved(false);
       setImage(i);
       setCreateObjectURL(URL.createObjectURL(i));
+
+      onChange({ image: i, objectImage: URL.createObjectURL(i) });
     }
   };
 
-  const uploadToServer = async (event) => {
+  const uploadToServer = useCallback(async () => {
     setIsLoading(true);
     try {
       const body = new FormData();
@@ -46,7 +55,8 @@ export default function Uploader({ type, value, ownerId }) {
       console.error(err);
     }
     setIsLoading(false);
-  };
+    onUpload();
+  }, [image, type, ownerId, onUpload]);
 
   const [openDialogMessage, setOpenDialogMessage] = useState(false);
 
@@ -54,61 +64,62 @@ export default function Uploader({ type, value, ownerId }) {
     setOpenDialogMessage(false);
   };
 
+  useEffect(() => {
+    (async () => {
+      if (submit) await uploadToServer();
+    })();
+  }, [submit, uploadToServer]);
+
   return (
-    <Card sx={{ maxWidth: 345, mb: 2 }}>
-      <CardActionArea component="label">
-        <CardMedia
-          component="img"
-          height="300"
-          image={createObjectURL || value?.url}
-          alt={image?.name || value?.name}
-        />
+    <>
+      <Typography sx={{ mb: 1 }}>{label}</Typography>
 
-        <input
-          hidden
-          type="file"
-          name="image"
-          accept="image/*"
-          onChange={uploadToClient}
-        />
-      </CardActionArea>
+      <Card sx={{ maxWidth: 345, mb: 2 }}>
+        {createObjectURL || value?.url ? (
+          <CardActionArea component="label">
+            <CardMedia
+              component="img"
+              height="300"
+              image={createObjectURL || value?.url}
+              alt={image?.name || value?.name}
+            />
 
-      {!saved && image && (
-        <CardContent>
-          <TextField
-            fullWidth
-            size="small"
-            variant="standard"
-            name="fileName"
-            label="Name"
-            value={image.name}
-            InputProps={{ readOnly: true }}
-          />
-        </CardContent>
-      )}
-
-      {!saved && image && (
-        <CardActions>
-          <Button
-            size="small"
-            color="primary"
-            type="submit"
-            onClick={uploadToServer}
-          >
-            Save
+            <input
+              hidden
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={uploadToClient}
+            />
+          </CardActionArea>
+        ) : (
+          <Button fullWidth variant="contained" component="label">
+            <Upload />
+            Tambahkan file
+            <input
+              hidden
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={uploadToClient}
+            />
           </Button>
-        </CardActions>
-      )}
+        )}
 
-      {isLoading && <Loader />}
+        {isLoading && <Loader />}
 
-      <Dialog open={openDialogMessage} onClose={handleCloseDialogMessage}>
-        <DialogContent>
-          <Typography variant="p" component="div" sx={{ textAlign: "center" }}>
-            {message}
-          </Typography>
-        </DialogContent>
-      </Dialog>
-    </Card>
+        <Dialog open={openDialogMessage} onClose={handleCloseDialogMessage}>
+          <DialogContent>
+            <Typography
+              variant="p"
+              component="div"
+              sx={{ textAlign: "center" }}
+            >
+              {message}
+            </Typography>
+          </DialogContent>
+        </Dialog>
+      </Card>
+    </>
   );
 }

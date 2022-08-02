@@ -59,8 +59,8 @@ export default function Filter({
             fullWidth
             select
             label="Sekolah"
-            value={filterSchool.name || ""}
-            onChange={onChangeFilterSchool("name")}
+            value={filterSchool.id || ""}
+            onChange={onChangeFilterSchool("id")}
           >
             <MenuItem value="">Semua</MenuItem>
             {isLoading ? (
@@ -69,7 +69,7 @@ export default function Filter({
               </MenuItem>
             ) : (
               schoolOptions
-                .map((school) => ({ value: school.name, label: school.name }))
+                .map((school) => ({ value: school.id, label: school.name }))
                 .map((option, i) => (
                   <MenuItem key={i} value={option.value}>
                     {option.label}
@@ -152,8 +152,7 @@ export default function Filter({
           >
             <MenuItem value="">Semua</MenuItem>
             {[
-              { value: "student", label: "Siswa" },
-              { value: "scholar", label: "Mahasiswa" },
+              { value: "participant", label: "Peserta" },
               { value: "official", label: "Official" },
             ].map((option, i) => (
               <MenuItem key={i} value={option.value}>

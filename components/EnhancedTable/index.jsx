@@ -17,6 +17,7 @@ import EnhancedTableHead from "./EnhanchedTableHead";
 import Loader from "./Loader";
 import cleanObj from "./utils/cleanObj";
 import Detail from "./Detail";
+import Create from "./Create";
 
 export default function EnhancedTable({ title, type, cells, filter }) {
   const [orderBy, setOrderBy] = useState("updatedAt");
@@ -93,6 +94,11 @@ export default function EnhancedTable({ title, type, cells, filter }) {
     setSelectedDetail();
   };
 
+  const [openAdd, setOpenAdd] = useState(false);
+  const handloggleAdd = () => {
+    setOpenAdd(!openAdd);
+  };
+
   return (
     <>
       <Box sx={{ width: "100%", mt: 2 }}>
@@ -106,9 +112,11 @@ export default function EnhancedTable({ title, type, cells, filter }) {
           <TableContainer>
             <Table sx={{ minWidth: 750 }} size="medium">
               <EnhancedTableHead
+                type={type}
                 order={order}
                 orderBy={orderBy}
                 onRequestSort={handleRequestSort}
+                onAdd={handloggleAdd}
                 rowCount={count}
                 headCells={cells.map((cell) => {
                   let id = cell;
@@ -187,6 +195,13 @@ export default function EnhancedTable({ title, type, cells, filter }) {
           />
         </Paper>
       </Box>
+
+      <Create
+        type={type}
+        open={openAdd}
+        onClose={handloggleAdd}
+        fetchRows={fetchRows}
+      />
 
       <Detail
         type={type}

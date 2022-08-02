@@ -89,7 +89,7 @@ model participant {
   phone     String
   dob       DateTime
   gender    ParticipantGender @default(male)
-  type      ParticipantType @default(student)
+  type      ParticipantType @default(participant)
   studentId String?
   class     String?
   futsalPosition  ParticipantFutsalPosition?
@@ -114,8 +114,7 @@ enum ParticipantGender {
 }
 
 enum ParticipantType {
-  student
-  scholar
+  participant
   official
 }
 

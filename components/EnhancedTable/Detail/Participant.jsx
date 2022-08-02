@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -79,6 +79,41 @@ export default function Participant({ detail, onClose, fetchRows }) {
     setOpenConfirm(false);
   };
 
+  const isOfficial = values.type === "official";
+  const isParticipant = values.type === "student";
+  const isFutsal = valuesSchool.branch === "futsal";
+  const isUniv = valuesSchool.category === "univ";
+
+  const fileAvatar =
+    values.files?.length && values.files.find((file) => file.type === "avatar");
+  const fileLicense =
+    isOfficial &&
+    values.files?.length &&
+    values.files.find((file) => file.type === "license");
+
+  const [avatar, setAvatar] = useState(fileAvatar);
+  const [license, setLicense] = useState(fileLicense);
+  const [submitAvatar, setSubmitAvatar] = useState(false);
+  const [submitLicense, setSubmitLicense] = useState(false);
+
+  const handleChangeAvatar = ({ image }) => {
+    setAvatar(image);
+    setIsDirty(true);
+  };
+
+  const handleChangeLicense = ({ image }) => {
+    setLicense(image);
+    setIsDirty(true);
+  };
+
+  const onFinishUploadAvatar = useCallback(() => {
+    setSubmitAvatar(false);
+  }, []);
+
+  const onFinishUploadLicense = useCallback(() => {
+    setSubmitLicense(false);
+  }, []);
+
   const handleUpdate = async () => {
     const data = {};
     for (const field in startValues) {
@@ -93,9 +128,13 @@ export default function Participant({ detail, onClose, fetchRows }) {
         idString: detail,
         participant: data,
       });
+
+      if (avatar) setSubmitAvatar(true);
+      if (license) setSubmitLicense(true);
     } catch (err) {
       console.error(err);
     }
+
     setIsLoading(false);
     closeConfirm();
     setStartValues({ ...startValues, ...data });
@@ -128,17 +167,6 @@ export default function Participant({ detail, onClose, fetchRows }) {
     onClose();
     fetchRows();
   };
-
-  const isOfficial = startValues.type === "official";
-  const isStudent = startValues.type === "student";
-  const isFutsal = valuesSchool.branch === "futsal";
-
-  const fileAvatar =
-    values.files?.length && values.files.find((file) => file.type === "avatar");
-  const fileLicense =
-    isOfficial &&
-    values.files?.length &&
-    values.files.find((file) => file.type === "license");
 
   const [openQRCode, setOpenQRCode] = useState(false);
   const toggleQRCode = () => {
@@ -290,6 +318,24 @@ export default function Participant({ detail, onClose, fetchRows }) {
                 <MenuItem value="female">Wanita</MenuItem>
               </TextField>
 
+              <TextField
+                required
+                sx={{ mb: 2 }}
+                size="small"
+                fullWidth
+                select
+                name="type"
+                label="Type"
+                value={values.type || ""}
+                onChange={handleChange("type")}
+                error={Boolean(errors.type)}
+                helperText={errors.type}
+                InputLabelProps={{ shrink: true }}
+              >
+                <MenuItem value="participant">Peserta</MenuItem>
+                <MenuItem value="official">Official</MenuItem>
+              </TextField>
+
               {!isOfficial && (
                 <TextField
                   required
@@ -307,7 +353,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
                 />
               )}
 
-              {isStudent && (
+              {!isUniv && isParticipant && (
                 <TextField
                   required
                   sx={{ mb: 2 }}
@@ -370,15 +416,23 @@ export default function Participant({ detail, onClose, fetchRows }) {
 
             <Grid item sm={5} xs={12}>
               <Uploader
+                label="Foto Profile"
                 type="avatar"
                 value={fileAvatar}
                 ownerId={startValues.id}
+                submit={submitAvatar}
+                onChange={handleChangeAvatar}
+                onUpload={onFinishUploadAvatar}
               />
               {isOfficial && (
                 <Uploader
+                  label="Foto License"
                   type="license"
                   value={fileLicense}
                   ownerId={startValues.id}
+                  submit={submitLicense}
+                  onChange={handleChangeLicense}
+                  onUpload={onFinishUploadLicense}
                 />
               )}
 
@@ -417,7 +471,6 @@ export default function Participant({ detail, onClose, fetchRows }) {
                   </TextField>
 
                   <TextField
-                    sx={{ mb: 2 }}
                     size="small"
                     fullWidth
                     select
@@ -429,21 +482,6 @@ export default function Participant({ detail, onClose, fetchRows }) {
                   >
                     <MenuItem value="futsal">Futsal</MenuItem>
                     <MenuItem value="dance">Dance</MenuItem>
-                  </TextField>
-
-                  <TextField
-                    size="small"
-                    fullWidth
-                    select
-                    name="type"
-                    label="Type"
-                    value={startValues.type || ""}
-                    InputLabelProps={{ shrink: true }}
-                    inputProps={{ readOnly: true }}
-                  >
-                    <MenuItem value="student">Siswa/Siswi</MenuItem>
-                    <MenuItem value="scholar">Mahasiswa/Mahasiswi</MenuItem>
-                    <MenuItem value="official">Official</MenuItem>
                   </TextField>
                 </CardContent>
               </Card>

@@ -13,7 +13,9 @@ export default function EnhancedTableHead({
   order,
   orderBy,
   onRequestSort,
+  onAdd,
   headCells,
+  type,
 }) {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
@@ -37,11 +39,13 @@ export default function EnhancedTableHead({
             </TableSortLabel>
           </TableCell>
         ))}
-        <TableCell align="right">
-          <IconButton size="small" color="primary">
-            <Add />
-          </IconButton>
-        </TableCell>
+        {type !== "qrcode" && (
+          <TableCell align="right">
+            <IconButton size="small" color="primary" onClick={onAdd}>
+              <Add />
+            </IconButton>
+          </TableCell>
+        )}
       </TableRow>
     </TableHead>
   );

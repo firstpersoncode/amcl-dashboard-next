@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
-  Box,
   Button,
   Card,
   CardContent,
@@ -14,28 +13,36 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Close, TaskAlt } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { QRCodeSVG } from "qrcode.react";
 import axios from "axios";
 import Uploader from "components/Uploader";
 import Loader from "../Loader";
-import { format } from "date-fns";
+import generateUID from "./utils/generateUID";
 
 export default function Participant({ onClose, fetchRows }) {
   const [isLoading, setIsLoading] = useState(false);
+
+  const [schoolOptions, setSchoolOptions] = useState([]);
+  useEffect(() => {
+    (async () => {
+      setIsLoading(true);
+      try {
+        const res = await axios.get("/api/school/names");
+        if (res?.data) setSchoolOptions(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+      setIsLoading(false);
+    })();
+  }, []);
+
   const [values, setValues] = useState({});
-  const [valuesSchool, setValuesSchool] = useState({});
   const [errors, setErrors] = useState({});
 
   const handleChange = (name) => (e) => {
     setValues((v) => ({ ...v, [name]: e.target.value }));
-    setErrors((v) => ({ ...v, [name]: undefined }));
-  };
-
-  const handleChangeSchool = (name) => (e) => {
-    setValuesSchool((v) => ({ ...v, [name]: e.target.value }));
     setErrors((v) => ({ ...v, [name]: undefined }));
   };
 
@@ -50,12 +57,62 @@ export default function Participant({ onClose, fetchRows }) {
     setOpenConfirm(false);
   };
 
+  const isOfficial = values.type === "official";
+  const isParticipant = values.type === "participant";
+  const isFutsal =
+    schoolOptions.find((s) => s.id === values.schoolId)?.branch === "futsal";
+  const isUniv =
+    schoolOptions.find((s) => s.id === values.schoolId)?.category === "univ";
+
+  const fileAvatar =
+    values.files?.length && values.files.find((file) => file.type === "avatar");
+  const fileLicense =
+    isOfficial &&
+    values.files?.length &&
+    values.files.find((file) => file.type === "license");
+
+  const [avatar, setAvatar] = useState(fileAvatar);
+  const [license, setLicense] = useState(fileLicense);
+  const [submitAvatar, setSubmitAvatar] = useState(false);
+  const [submitLicense, setSubmitLicense] = useState(false);
+
+  const handleChangeAvatar = ({ image }) => {
+    setAvatar(image);
+  };
+
+  const handleChangeLicense = ({ image }) => {
+    setLicense(image);
+  };
+
+  const onFinishUploadAvatar = useCallback(() => {
+    setSubmitAvatar(false);
+  }, []);
+
+  const onFinishUploadLicense = useCallback(() => {
+    setSubmitLicense(false);
+  }, []);
+
   const handleCreate = async () => {
     setIsLoading(true);
     try {
-      await axios.post("/api/participant/create", {
-        participant: values,
+      const selectedSchool = schoolOptions.find(
+        (s) => s.id === values.schoolId
+      );
+      const res = await axios.post("/api/participant/create", {
+        participant: {
+          ...values,
+          idString: generateUID(),
+          schoolId: selectedSchool.id,
+          active: true,
+          archived: false,
+        },
       });
+
+      if (res.data?.id) {
+        setValues((v) => ({ ...v, id: res.data.id }));
+        if (avatar) setSubmitAvatar(true);
+        if (license) setSubmitLicense(true);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -64,17 +121,6 @@ export default function Participant({ onClose, fetchRows }) {
     fetchRows();
     onClose();
   };
-
-  const isOfficial = values.type === "official";
-  const isStudent = values.type === "student";
-  const isFutsal = valuesSchool.branch === "futsal";
-
-  const fileAvatar =
-    values.files?.length && values.files.find((file) => file.type === "avatar");
-  const fileLicense =
-    isOfficial &&
-    values.files?.length &&
-    values.files.find((file) => file.type === "license");
 
   return (
     <>
@@ -108,7 +154,6 @@ export default function Participant({ onClose, fetchRows }) {
                 value={values.name || ""}
                 onChange={handleChange("name")}
                 helperText={errors.name}
-                InputLabelProps={{ shrink: true }}
               />
 
               <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -129,7 +174,6 @@ export default function Participant({ onClose, fetchRows }) {
                       name="dob"
                       error={Boolean(errors.dob)}
                       helperText={errors.dob}
-                      InputLabelProps={{ shrink: true }}
                     />
                   )}
                 />
@@ -147,7 +191,6 @@ export default function Participant({ onClose, fetchRows }) {
                 onChange={handleChange("email")}
                 error={Boolean(errors.email)}
                 helperText={errors.email}
-                InputLabelProps={{ shrink: true }}
               />
 
               <TextField
@@ -162,7 +205,6 @@ export default function Participant({ onClose, fetchRows }) {
                 onChange={handleChange("phone")}
                 error={Boolean(errors.phone)}
                 helperText={errors.phone}
-                InputLabelProps={{ shrink: true }}
               />
 
               <TextField
@@ -176,7 +218,6 @@ export default function Participant({ onClose, fetchRows }) {
                 onChange={handleChange("instagram")}
                 error={Boolean(errors.instagram)}
                 helperText={errors.instagram}
-                InputLabelProps={{ shrink: true }}
               />
 
               <TextField
@@ -191,10 +232,26 @@ export default function Participant({ onClose, fetchRows }) {
                 onChange={handleChange("gender")}
                 error={Boolean(errors.gender)}
                 helperText={errors.gender}
-                InputLabelProps={{ shrink: true }}
               >
                 <MenuItem value="male">Pria</MenuItem>
                 <MenuItem value="female">Wanita</MenuItem>
+              </TextField>
+
+              <TextField
+                required
+                sx={{ mb: 2 }}
+                size="small"
+                fullWidth
+                select
+                name="type"
+                label="Type"
+                value={values.type || ""}
+                onChange={handleChange("type")}
+                error={Boolean(errors.type)}
+                helperText={errors.type}
+              >
+                <MenuItem value="participant">Peserta</MenuItem>
+                <MenuItem value="official">Official</MenuItem>
               </TextField>
 
               {!isOfficial && (
@@ -210,11 +267,10 @@ export default function Participant({ onClose, fetchRows }) {
                   onChange={handleChange("studentId")}
                   error={Boolean(errors.studentId)}
                   helperText={errors.studentId}
-                  InputLabelProps={{ shrink: true }}
                 />
               )}
 
-              {isStudent && (
+              {!isUniv && isParticipant && (
                 <TextField
                   required
                   sx={{ mb: 2 }}
@@ -227,7 +283,6 @@ export default function Participant({ onClose, fetchRows }) {
                   onChange={handleChange("class")}
                   error={Boolean(errors.class)}
                   helperText={errors.class}
-                  InputLabelProps={{ shrink: true }}
                 />
               )}
 
@@ -244,7 +299,6 @@ export default function Participant({ onClose, fetchRows }) {
                   onChange={handleChange("futsalPosition")}
                   error={Boolean(errors.futsalPosition)}
                   helperText={errors.futsalPosition}
-                  InputLabelProps={{ shrink: true }}
                 >
                   <MenuItem value="goal">Penjaga Gawang</MenuItem>
                   <MenuItem value="back">Pertahanan</MenuItem>
@@ -265,7 +319,6 @@ export default function Participant({ onClose, fetchRows }) {
                   onChange={handleChange("officialPosition")}
                   error={Boolean(errors.officialPosition)}
                   helperText={errors.officialPosition}
-                  InputLabelProps={{ shrink: true }}
                 >
                   <MenuItem value="coach">Pelatih</MenuItem>
                   <MenuItem value="coachAssistant">Asisten Pelatih</MenuItem>
@@ -276,92 +329,57 @@ export default function Participant({ onClose, fetchRows }) {
             </Grid>
 
             <Grid item sm={5} xs={12}>
-              <Uploader type="avatar" value={fileAvatar} ownerId={values.id} />
+              <Uploader
+                label="Foto Profile"
+                type="avatar"
+                value={fileAvatar}
+                ownerId={values.id}
+                submit={submitAvatar}
+                onChange={handleChangeAvatar}
+                onUpload={onFinishUploadAvatar}
+              />
               {isOfficial && (
                 <Uploader
+                  label="Foto License"
                   type="license"
                   value={fileLicense}
                   ownerId={values.id}
+                  submit={submitLicense}
+                  onChange={handleChangeLicense}
+                  onUpload={onFinishUploadLicense}
                 />
               )}
 
               <Card sx={{ mt: 4 }}>
                 <CardContent>
                   <TextField
-                    sx={{ mb: 2 }}
                     size="small"
                     fullWidth
                     select
-                    name="school"
+                    name="schoolId"
                     label="Sekolah"
-                    value={valuesSchool.idString || ""}
-                    InputLabelProps={{ shrink: true }}
-                    onChange={handleChangeSchool("idString")}
+                    value={values.schoolId || ""}
+                    onChange={handleChange("schoolId")}
                   >
-                    <MenuItem value={valuesSchool.idString || ""}>
-                      {valuesSchool.name}
-                    </MenuItem>
-                  </TextField>
-
-                  <TextField
-                    sx={{ mb: 2 }}
-                    size="small"
-                    fullWidth
-                    select
-                    name="category"
-                    label="Kategori"
-                    value={valuesSchool.category || ""}
-                    InputLabelProps={{ shrink: true }}
-                    onChange={handleChangeSchool("category")}
-                  >
-                    <MenuItem value="js">SMP</MenuItem>
-                    <MenuItem value="hs">SMA</MenuItem>
-                    <MenuItem value="univ">Universitas</MenuItem>
-                  </TextField>
-
-                  <TextField
-                    sx={{ mb: 2 }}
-                    size="small"
-                    fullWidth
-                    select
-                    name="branch"
-                    label="Cabang"
-                    value={valuesSchool.branch || ""}
-                    InputLabelProps={{ shrink: true }}
-                    onChange={handleChangeSchool("branch")}
-                  >
-                    <MenuItem value="futsal">Futsal</MenuItem>
-                    <MenuItem value="dance">Dance</MenuItem>
-                  </TextField>
-
-                  <TextField
-                    size="small"
-                    fullWidth
-                    select
-                    name="type"
-                    label="Type"
-                    value={values.type || ""}
-                    InputLabelProps={{ shrink: true }}
-                    onChange={handleChangeSchool("type")}
-                  >
-                    <MenuItem
-                      disabled={valuesSchool.category === "univ"}
-                      value="student"
-                    >
-                      Siswa/Siswi
-                    </MenuItem>
-                    <MenuItem
-                      disabled={valuesSchool.category !== "univ"}
-                      value="scholar"
-                    >
-                      Mahasiswa/Mahasiswi
-                    </MenuItem>
-                    <MenuItem value="official">Official</MenuItem>
+                    {schoolOptions
+                      .map((school) => ({
+                        value: school.id,
+                        label: school.name,
+                      }))
+                      .map((option, i) => (
+                        <MenuItem key={i} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
                   </TextField>
                 </CardContent>
               </Card>
             </Grid>
           </Grid>
+        </DialogContent>
+
+        <DialogContent>
+          <pre>{JSON.stringify(values, null, 4)}</pre>
         </DialogContent>
 
         <DialogActions>
@@ -373,7 +391,7 @@ export default function Participant({ onClose, fetchRows }) {
 
       <Dialog open={openConfirm} onClose={closeConfirm}>
         <DialogContent>
-          Apakah Anda yakin ingin menyimpan perubahan?
+          Apakah Anda yakin ingin membuat peserta baru?
         </DialogContent>
         <DialogActions>
           <Button onClick={closeConfirm}>Batal</Button>

@@ -290,8 +290,7 @@ export default function Scanned({ detail, onClose }) {
                   InputLabelProps={{ shrink: true }}
                   inputProps={{ readOnly: true }}
                 >
-                  <MenuItem value="student">Siswa/Siswi</MenuItem>
-                  <MenuItem value="scholar">Mahasiswa/Mahasiswi</MenuItem>
+                  <MenuItem value="participant">Peserta</MenuItem>
                   <MenuItem value="official">Official</MenuItem>
                 </TextField>
               </CardContent>
