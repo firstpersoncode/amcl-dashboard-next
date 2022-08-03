@@ -5,9 +5,9 @@ const context = {};
 
 const AppSessionContext = createContext(context);
 
-export function AppSessionContextProvider({ children, AppSession }) {
+export function AppSessionContextProvider({ children, session }) {
   return (
-    <AppSessionContext.Provider value={AppSession}>
+    <AppSessionContext.Provider value={session}>
       {children}
     </AppSessionContext.Provider>
   );

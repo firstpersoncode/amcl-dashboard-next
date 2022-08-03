@@ -7,21 +7,26 @@ export default withSession(async function login(req, res) {
   if (req.method !== "POST") return res.status(404).send("Not found");
   if (req.session.getEvent("admin")) return res.status(403).send("Forbidden");
 
-  const { captcha } = req.body;
+  if (
+    process.env.BUILD_ENV === "production" ||
+    process.env.BUILD_ENV === "prod"
+  ) {
+    const { captcha } = req.body;
 
-  const validateCaptcha = await axios.post(
-    "https://hcaptcha.com/siteverify",
-    `response=${captcha}&secret=${process.env.HCAPTCHA_SECRET_KEY}`,
-    {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
-      },
-    }
-  );
+    const validateCaptcha = await axios.post(
+      "https://hcaptcha.com/siteverify",
+      `response=${captcha}&secret=${process.env.HCAPTCHA_SECRET_KEY}`,
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=utf-8",
+        },
+      }
+    );
 
-  const isValid = validateCaptcha.data?.success;
+    const isValid = validateCaptcha.data?.success;
 
-  if (!isValid) return res.status(403).send("Invalid captcha");
+    if (!isValid) return res.status(403).send("Invalid captcha");
+  }
 
   const { email, password } = req.body;
   const admin = await getAdmin(email);

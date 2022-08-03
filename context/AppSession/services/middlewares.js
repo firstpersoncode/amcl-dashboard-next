@@ -25,7 +25,7 @@ export function withSession(handler) {
     const session = new SessionController(configs, { req, res });
     req.session = await session.fetch();
 
-    if (!req.session) return res.status(403).send("Forbidden resource");
+    if (!req.session?.id) return res.status(403).send("Forbidden resource");
 
     return handler(req, res, ...rest);
   };

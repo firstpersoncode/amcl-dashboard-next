@@ -41,15 +41,30 @@ export default function useForm() {
   const captcha = useRef();
   const resetCaptcha = () => captcha.current.resetCaptcha();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
     const hasError = validate();
     if (hasError) return;
 
-    resetCaptcha();
+    if (
+      process.env.BUILD_ENV === "production" ||
+      process.env.BUILD_ENV === "prod"
+    ) {
+      resetCaptcha();
 
-    captcha.current.execute();
+      captcha.current.execute();
+    } else {
+      setIsLoading(true);
+      try {
+        await axios.post("/api/admin/login", { ...values });
+        replace("/");
+      } catch (err) {
+        console.error(err);
+        if (err.response?.data) setMessage(err.response.data);
+      }
+      setIsLoading(false);
+    }
   };
 
   const { replace } = useRouter();

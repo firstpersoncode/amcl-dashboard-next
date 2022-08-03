@@ -1,12 +1,12 @@
 import { CommonContextProvider } from "context/Common";
 import { AppSessionContextProvider, withSessionSsr } from "context/AppSession";
-import Dashboard from "components/Dashboard";
+import Screen from "components/Screen";
 
 export default function Page({ session, global }) {
   return (
     <AppSessionContextProvider session={session}>
       <CommonContextProvider context={global}>
-        <Dashboard />
+        <Screen />
       </CommonContextProvider>
     </AppSessionContextProvider>
   );

@@ -15,6 +15,7 @@ module.exports = () => {
       DO_SPACES_KEY: process.env.DO_SPACES_KEY,
       DO_SPACES_SECRET: process.env.DO_SPACES_SECRET,
       DO_SPACES_BUCKET: process.env.DO_SPACES_BUCKET,
+      API_KEY: process.env.API_KEY,
     },
   };
 };
