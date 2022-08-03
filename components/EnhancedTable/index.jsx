@@ -151,9 +151,7 @@ export default function EnhancedTable({ title, type, cells, filter }) {
                       {cells.map((cell, i) => {
                         if (typeof cell === "function")
                           return (
-                            <TableCell key={i}>
-                              {String(cell(row).value)}
-                            </TableCell>
+                            <TableCell key={i}>{cell(row).value}</TableCell>
                           );
 
                         return (

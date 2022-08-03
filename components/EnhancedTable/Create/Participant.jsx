@@ -20,6 +20,7 @@ import axios from "axios";
 import Uploader from "components/Uploader";
 import Loader from "../Loader";
 import generateUID from "./utils/generateUID";
+import AutocompleteField from "components/AutoCompleteField";
 
 export default function Participant({ onClose, fetchRows }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -42,7 +43,8 @@ export default function Participant({ onClose, fetchRows }) {
   const [errors, setErrors] = useState({});
 
   const handleChange = (name) => (e) => {
-    setValues((v) => ({ ...v, [name]: e.target.value }));
+    const target = name === "schoolId" ? e.target.value : e.target;
+    setValues((v) => ({ ...v, [name]: target.value }));
     setErrors((v) => ({ ...v, [name]: undefined }));
   };
 
@@ -350,36 +352,17 @@ export default function Participant({ onClose, fetchRows }) {
                 />
               )}
 
-              <Card sx={{ mt: 4 }}>
-                <CardContent>
-                  <TextField
-                    size="small"
-                    fullWidth
-                    select
-                    name="schoolId"
-                    label="Sekolah"
-                    value={values.schoolId || ""}
-                    onChange={handleChange("schoolId")}
-                  >
-                    {schoolOptions
-                      .map((school) => ({
-                        value: school.id,
-                        label: school.name,
-                      }))
-                      .map((option, i) => (
-                        <MenuItem key={i} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      ))}
-                  </TextField>
-                </CardContent>
-              </Card>
+              <AutocompleteField
+                label="Sekolah"
+                value={values.schoolId || ""}
+                onChange={handleChange("schoolId")}
+                options={schoolOptions.map((s) => ({
+                  label: s.name,
+                  value: s.id,
+                }))}
+              />
             </Grid>
           </Grid>
-        </DialogContent>
-
-        <DialogContent>
-          <pre>{JSON.stringify(values, null, 4)}</pre>
         </DialogContent>
 
         <DialogActions>

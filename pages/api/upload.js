@@ -112,7 +112,8 @@ export default withSession(async function upload(req, res) {
         )
       )
         throw "File not supported";
-      if (files.file.size > 3000000) throw "File size not supported";
+      if (files.file.size > 3000000)
+        throw "File size melebihi 3mb, upload lebih kecil";
 
       await uploadToDOSpaces(files.file);
       await saveFile(fields, files.file);

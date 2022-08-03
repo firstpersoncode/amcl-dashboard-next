@@ -65,7 +65,8 @@ export default function Participant() {
   const [filterSchool, setFilterSchool] = useState({});
 
   const onChangeFilterSchool = (name) => (e) => {
-    setFilterSchool((v) => ({ ...v, [name]: e.target.value }));
+    const selectedOption = name === "id" ? e.target.value : e.target;
+    setFilterSchool((v) => ({ ...v, [name]: selectedOption?.value }));
   };
 
   return (

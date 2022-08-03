@@ -15,15 +15,7 @@ const { deleteSessions } = require("../prisma/services/session");
 const { deleteEvents } = require("../prisma/services/event");
 const { deleteFiles } = require("../prisma/services/file");
 
-function generateUID() {
-  let firstPart = (Math.random() * 46656) | 0;
-  let secondPart = (Math.random() * 46656) | 0;
-  firstPart = ("0000" + firstPart.toString(36)).slice(-4);
-  secondPart = ("0000" + secondPart.toString(36)).slice(-4);
-  return (firstPart + secondPart).toUpperCase();
-}
-
-function generateRandom(min = 0, max = 100) {
+function generateRandom(min = 46656, max = 99999) {
   let difference = max - min;
   let rand = Math.random();
   rand = Math.floor(rand * difference);
@@ -32,12 +24,21 @@ function generateRandom(min = 0, max = 100) {
   return rand;
 }
 
+function generateUID() {
+  let firstPart = (Math.random() * generateRandom()) | 0;
+  let secondPart = (Math.random() * generateRandom()) | 0;
+  firstPart = ("0000" + firstPart.toString(36)).slice(-4);
+  secondPart = ("0000" + secondPart.toString(36)).slice(-4);
+  return (firstPart + secondPart).toUpperCase();
+}
+
 async function cleadDB() {
   // clean
   console.log("Clean database");
-  await deleteEvents();
-  await deleteSessions();
-  await deleteAdmins();
+  // await deleteEvents();
+  // await deleteSessions();
+  // await deleteAdmins();
+
   await deleteQRcodes();
   await deleteFiles();
   await deleteParticipants();
@@ -61,15 +62,15 @@ async function generateAdmin() {
 
 async function generateSchools() {
   // create 3 schools (js, hs, univ)
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 100; i++) {
     console.log("Generate schools");
     const school = {
       idString: generateUID(),
-      email: `school@demo+${i}.com`,
+      email: `school@demo+${generateUID()}.com`,
       password: hashSync("schooldemo", 8),
       name: `School ${i}`,
-      category: ["js", "hs", "univ"][i],
-      branch: ["futsal", "dance", "futsal"][i],
+      category: ["js", "hs", "univ"][generateRandom(0, 2)],
+      branch: ["futsal", "dance", "futsal"][generateRandom(0, 2)],
       active: true,
       archived: false,
       completed: false,
@@ -82,20 +83,20 @@ async function generateSchools() {
     for (let j = 0; j < 14; j++) {
       const participant = {
         idString: generateUID(),
-        email: `participant@demo+${i}${j}.com`,
+        email: `participant@demo+${generateUID()}.com`,
         name: `Participant ${j}`,
         phone: "01234567890",
         dob: new Date(),
-        gender: j % 2 === 0 ? "female" : "male",
+        gender: ["male", "female"][generateRandom(0, 1)],
         type: "participant",
-        studentId: String(generateRandom(100, 999)),
+        studentId: `${generateUID()}-${generateUID()}`,
         class:
           school.category !== "univ" ? String(generateRandom(0, 4)) : undefined,
         futsalPosition:
           school.branch === "futsal"
             ? ["goal", "back", "mid", "forward"][generateRandom(0, 3)]
             : undefined,
-        instagram: `@participant-${j}`,
+        instagram: `@participant-${generateUID()}`,
         schoolId: newSchool.id,
         active: true,
         archived: false,
@@ -111,21 +112,21 @@ async function generateSchools() {
     for (let j = 0; j < limitOfficials; j++) {
       const participant = {
         idString: generateUID(),
-        email: `official@demo+${i}${j}.com`,
+        email: `official@demo+${generateUID()}.com`,
         name: `Official ${j}`,
         phone: "01234567890",
         dob: new Date(),
-        gender: j % 2 === 0 ? "female" : "male",
+        gender: ["male", "female"][generateRandom(0, 1)],
         type: "official",
         officialPosition:
           school.branch === "futsal"
             ? ["coach", "coachAssistant", "manager", "teacher"][
-                school.category !== "univ"
-                  ? generateRandom(0, 3)
-                  : generateRandom(0, 2)
+                school.category === "univ"
+                  ? generateRandom(0, 2)
+                  : generateRandom(0, 3)
               ]
             : undefined,
-        instagram: `@official-${j}`,
+        instagram: `@official-${generateUID()}`,
         schoolId: newSchool.id,
         active: true,
         archived: false,
@@ -157,7 +158,7 @@ async function generateQRCodes() {
 
 async function main() {
   await cleadDB();
-  await generateAdmin();
+  // await generateAdmin();
   await generateSchools();
   await generateQRCodes();
 }

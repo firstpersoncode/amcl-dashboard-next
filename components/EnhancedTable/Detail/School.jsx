@@ -202,13 +202,13 @@ export default function School({ detail, onClose, fetchRows }) {
               <FormGroup>
                 <FormControlLabel
                   control={<Switch />}
-                  label="Active"
+                  label="Aktif"
                   checked={values.active || false}
                   onChange={handleChange("active", true)}
                 />
                 <FormControlLabel
                   control={<Switch />}
-                  label="Completed"
+                  label="QR Code"
                   checked={values.completed || false}
                   onChange={handleChange("completed", true)}
                 />

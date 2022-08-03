@@ -9,6 +9,7 @@ import {
 import { Search } from "@mui/icons-material";
 import axios from "axios";
 import Loader from "./Loader";
+import AutocompleteField from "components/AutoCompleteField";
 
 export default function Filter({
   filterSchool,
@@ -54,29 +55,12 @@ export default function Filter({
         </Grid>
 
         <Grid item xs={6}>
-          <TextField
-            size="small"
-            fullWidth
-            select
+          <AutocompleteField
             label="Sekolah"
             value={filterSchool.id || ""}
             onChange={onChangeFilterSchool("id")}
-          >
-            <MenuItem value="">Semua</MenuItem>
-            {isLoading ? (
-              <MenuItem value="">
-                <Loader />
-              </MenuItem>
-            ) : (
-              schoolOptions
-                .map((school) => ({ value: school.id, label: school.name }))
-                .map((option, i) => (
-                  <MenuItem key={i} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))
-            )}
-          </TextField>
+            options={schoolOptions.map((s) => ({ label: s.name, value: s.id }))}
+          />
         </Grid>
         <Grid item xs={6}>
           <TextField

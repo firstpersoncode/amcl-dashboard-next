@@ -121,7 +121,7 @@ export default function School({ onClose, fetchRows }) {
                 onChange={handleChange("password")}
               />
 
-              <FormGroup>
+              {/* <FormGroup>
                 <FormControlLabel
                   control={<Switch />}
                   label="Active"
@@ -134,7 +134,7 @@ export default function School({ onClose, fetchRows }) {
                   checked={values.completed || false}
                   onChange={handleChange("completed", true)}
                 />
-              </FormGroup>
+              </FormGroup> */}
             </Grid>
 
             <Grid item sm={5} xs={12}>

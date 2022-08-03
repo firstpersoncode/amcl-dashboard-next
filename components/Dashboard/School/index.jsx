@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { format } from "date-fns";
+import { Tooltip } from "@mui/material";
+import { Block, Done } from "@mui/icons-material";
 import EnhancedTable from "components/EnhancedTable";
 import Filter from "./Filter";
 
@@ -63,8 +65,32 @@ export default function School() {
             label: "Jumlah peserta",
             value: row?._count.participants,
           }),
-          "active",
-          "completed",
+          (row) => ({
+            id: "active",
+            label: "Aktif",
+            value: row?.active ? (
+              <Tooltip title="Aktif">
+                <Done />
+              </Tooltip>
+            ) : (
+              <Tooltip title="Belum diaktifkan">
+                <Block />
+              </Tooltip>
+            ),
+          }),
+          (row) => ({
+            id: "completed",
+            label: "QR Code",
+            value: row?.completed ? (
+              <Tooltip title="QR Code dibagikan">
+                <Done />
+              </Tooltip>
+            ) : (
+              <Tooltip title="Belum dibagikan">
+                <Block />
+              </Tooltip>
+            ),
+          }),
           (row) => ({
             id: "createdAt",
             label: "Dibuat",
