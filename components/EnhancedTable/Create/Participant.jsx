@@ -103,7 +103,7 @@ export default function Participant({ onClose, fetchRows }) {
       const res = await axios.post("/api/participant/create", {
         participant: {
           ...values,
-          idString: generateUID(),
+          idString: `${selectedSchool.idString}-${generateUID()}`,
           schoolId: selectedSchool.id,
           active: true,
           archived: false,

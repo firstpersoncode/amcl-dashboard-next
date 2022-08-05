@@ -124,7 +124,13 @@ module.exports.countSchools = async ({ filter }) => {
 
 module.exports.getSchoolNames = async () => {
   const names = await client.school.findMany({
-    select: { id: true, name: true, branch: true, category: true },
+    select: {
+      id: true,
+      idString: true,
+      name: true,
+      branch: true,
+      category: true,
+    },
   });
   return names;
 };
