@@ -7,6 +7,7 @@ module.exports.getAllParticipants = async ({
   orderBy,
   order,
   filter,
+  include,
 }) => {
   const participants = await client.participant.findMany({
     where: {
@@ -30,6 +31,7 @@ module.exports.getAllParticipants = async ({
       type: true,
       createdAt: true,
       updatedAt: true,
+      ...(include && Object.keys(include).length ? include : {}),
     },
   });
 

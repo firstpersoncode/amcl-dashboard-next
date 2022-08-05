@@ -1,9 +1,8 @@
 import { verify } from "jsonwebtoken";
 import { getEvent } from "prisma/services/event";
 import { getAllParticipants } from "prisma/services/participant";
-import { getSchoolStatuses } from "prisma/services/school";
 
-export default async function me(req, res) {
+export default async function participants(req, res) {
   if (req.method !== "GET") return res.status(404).send("Not found");
   if (req.headers["x-api-key"] !== process.env.API_KEY)
     return res.status(401).send("Unauthorized");
@@ -16,7 +15,10 @@ export default async function me(req, res) {
 
   const participants = await getAllParticipants({
     filter: { schoolId: user.oid },
+    include: { files: { select: { type: true, url: true } } },
   });
 
-  res.status(200).json({ user });
+  res.status(200).json({
+    participants,
+  });
 }
