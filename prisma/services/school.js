@@ -55,6 +55,8 @@ module.exports.getSchoolByEmail = async (email) => {
       idString: true,
       email: true,
       name: true,
+      category: true,
+      branch: true,
       password: true,
       active: true,
       completed: true,

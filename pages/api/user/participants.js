@@ -15,7 +15,17 @@ export default async function participants(req, res) {
 
   const participants = await getAllParticipants({
     filter: { schoolId: user.oid },
-    include: { files: { select: { type: true, url: true } } },
+    include: {
+      dob: true,
+      studentId: true,
+      class: true,
+      phone: true,
+      gender: true,
+      instagram: true,
+      futsalPosition: true,
+      officialPosition: true,
+      files: { select: { type: true, url: true } },
+    },
   });
 
   res.status(200).json({

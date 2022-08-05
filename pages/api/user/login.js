@@ -39,6 +39,8 @@ export default async function login(req, res) {
       id: user.idString,
       email: user.email,
       name: user.name,
+      category: user.category,
+      branch: user.branch,
 
       active: user.active,
       completed: user.completed,

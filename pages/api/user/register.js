@@ -54,6 +54,8 @@ export default async function register(req, res) {
       id: newUser.idString,
       email: newUser.email,
       name: newUser.name,
+      category: newUser.category,
+      branch: newUser.branch,
 
       active: newUser.active,
       completed: newUser.completed,
