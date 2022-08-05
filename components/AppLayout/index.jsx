@@ -16,7 +16,28 @@ export default function AppLayout({ children }) {
   return (
     <>
       <MetaHead />
-      <Box sx={{ display: "flex", overflow: "hidden" }}>
+      <Box
+        sx={{
+          display: "flex",
+          overflow: "hidden",
+          minHeight: "100vh",
+        }}
+      >
+        <Box
+          sx={{
+            position: "fixed",
+            left: 0,
+            right: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage: "url(/bannerr.PNG)",
+            backgroundRepeat: "no-repeat",
+            backgroundOrigin: "content-box",
+            backgroundSize: "cover",
+            filter: "blur(3px)",
+            opacity: "0.5",
+          }}
+        />
         <AppBar onToggleDrawer={handleToggleDrawer} />
         <DrawerMenu
           open={openDrawer}
@@ -26,6 +47,7 @@ export default function AppLayout({ children }) {
         <Box
           component="main"
           sx={{
+            zIndex: 2,
             flexGrow: 1,
             p: 3,
             overflow: "auto",

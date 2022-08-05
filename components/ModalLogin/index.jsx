@@ -6,7 +6,6 @@ import {
   CardContent,
   CardMedia,
   Dialog,
-  DialogActions,
   DialogContent,
   TextField,
   Typography,
@@ -50,12 +49,12 @@ export default function ModalLogin() {
           <Box sx={{ filter: isLoading ? "blur(4px)" : undefined }}>
             <CardMedia
               component="img"
-              height="80"
-              image="/banner.webp"
+              height="230"
+              image="/banner.PNG"
               alt="Banner"
             />
             <form onSubmit={handleSubmit}>
-              <CardContent>
+              <CardContent sx={{ minHeight: "200px" }}>
                 <TextField
                   autoFocus
                   fullWidth
@@ -74,17 +73,17 @@ export default function ModalLogin() {
                   error={Boolean(errors.password)}
                   helperText={errors.password}
                 />
-              </CardContent>
 
-              <DialogActions>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  onClick={handleSubmit}
-                >
-                  Masuk
-                </Button>
-              </DialogActions>
+                <Box sx={{ py: 2, textAlign: "right" }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    onClick={handleSubmit}
+                  >
+                    Masuk
+                  </Button>
+                </Box>
+              </CardContent>
             </form>
           </Box>
         </Card>

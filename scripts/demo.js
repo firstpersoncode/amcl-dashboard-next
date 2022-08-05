@@ -35,9 +35,9 @@ function generateUID() {
 async function cleadDB() {
   // clean
   console.log("Clean database");
-  // await deleteEvents();
-  // await deleteSessions();
-  // await deleteAdmins();
+  await deleteEvents();
+  await deleteSessions();
+  await deleteAdmins();
 
   await deleteQRcodes();
   await deleteFiles();
@@ -158,8 +158,8 @@ async function generateQRCodes() {
 
 async function main() {
   await cleadDB();
-  // await generateAdmin();
-  await generateSchools();
+  await generateAdmin();
+  // await generateSchools();
   // await generateQRCodes();
 }
 

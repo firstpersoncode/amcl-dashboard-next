@@ -86,6 +86,51 @@ module.exports.getParticipant = async (idString) => {
   return participant;
 };
 
+module.exports.getParticipantPublic = async (idString) => {
+  const participant = await client.participant.findUnique({
+    where: { idString },
+    select: {
+      idString: true,
+      name: true,
+      email: true,
+      phone: true,
+      dob: true,
+      gender: true,
+      type: true,
+      studentId: true,
+      class: true,
+      futsalPosition: true,
+      officialPosition: true,
+      instagram: true,
+
+      files: {
+        select: {
+          type: true,
+          name: true,
+          url: true,
+        },
+      },
+
+      qrcode: {
+        select: {
+          idString: true,
+          scannedAt: true,
+        },
+      },
+
+      school: {
+        select: {
+          name: true,
+          category: true,
+          branch: true,
+          password: false,
+        },
+      },
+    },
+  });
+  return participant;
+};
+
 module.exports.countParticipants = async ({ filter }) => {
   const count = await client.participant.count({
     where: {
