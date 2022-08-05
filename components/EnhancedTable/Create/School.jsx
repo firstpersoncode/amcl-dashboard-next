@@ -18,9 +18,9 @@ import {
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import axios from "axios";
+import generateUID from "utils/generateUID";
 import PasswordField from "components/PasswordField";
 import Loader from "../Loader";
-import generateUID from "./utils/generateUID";
 
 export default function School({ onClose, fetchRows }) {
   const [isLoading, setIsLoading] = useState(false);

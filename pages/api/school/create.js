@@ -7,6 +7,6 @@ export default withSession(async function create(req, res) {
 
   const { school } = req.body;
   const hashPassword = hashSync(school.password, 8);
-  const newSchool = await createSchool({ ...school, password: hashPassword });
-  res.status(200).json(newSchool);
+  await createSchool({ ...school, password: hashPassword });
+  res.status(200).send();
 });

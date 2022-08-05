@@ -29,6 +29,8 @@ export default withSession(async function login(req, res) {
   }
 
   const { email, password } = req.body;
+  if (!(email && password)) return res.status(403).send();
+
   const admin = await getAdmin(email);
   if (!admin) return res.status(404).send("Akun tidak ditemukan");
 

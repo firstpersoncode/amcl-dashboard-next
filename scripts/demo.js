@@ -160,7 +160,7 @@ async function main() {
   await cleadDB();
   // await generateAdmin();
   await generateSchools();
-  await generateQRCodes();
+  // await generateQRCodes();
 }
 
 main();

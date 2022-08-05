@@ -50,7 +50,15 @@ module.exports.getAllSchools = async ({
 module.exports.getSchoolByEmail = async (email) => {
   const school = await client.school.findFirst({
     where: { archived: false, email },
-    select: { id: true, email: true, name: true, password: true },
+    select: {
+      id: true,
+      idString: true,
+      email: true,
+      name: true,
+      password: true,
+      active: true,
+      completed: true,
+    },
   });
 
   return school;
@@ -83,6 +91,20 @@ module.exports.getSchool = async (idString) => {
           type: true,
         },
       },
+    },
+  });
+  return school;
+};
+
+module.exports.getSchoolStatuses = async (idString) => {
+  const school = await client.school.findFirst({
+    where: {
+      archived: false,
+      idString,
+    },
+    select: {
+      active: true,
+      completed: true,
     },
   });
   return school;

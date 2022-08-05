@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  FormControl,
-  IconButton,
-  Input,
-  InputAdornment,
-  InputLabel,
-} from "@mui/material";
+import { TextField, IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 export default function PasswordField({
@@ -14,6 +8,8 @@ export default function PasswordField({
   error,
   helperText,
   onChange,
+  required = false,
+  label,
 }) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -26,17 +22,19 @@ export default function PasswordField({
   };
 
   return (
-    <FormControl required fullWidth variant="standard">
-      <InputLabel htmlFor="password">Password</InputLabel>
-      <Input
-        sx={sx}
-        id="password"
-        type={showPassword ? "text" : "password"}
-        value={value}
-        onChange={onChange}
-        error={error}
-        helperText={helperText}
-        endAdornment={
+    <TextField
+      sx={sx}
+      label={label || "Password"}
+      required={required}
+      fullWidth
+      variant="standard"
+      type={showPassword ? "text" : "password"}
+      value={value}
+      onChange={onChange}
+      error={error}
+      helperText={helperText}
+      InputProps={{
+        endAdornment: (
           <InputAdornment position="end">
             <IconButton
               onClick={handleClickShowPassword}
@@ -45,8 +43,8 @@ export default function PasswordField({
               {showPassword ? <VisibilityOff /> : <Visibility />}
             </IconButton>
           </InputAdornment>
-        }
-      />
-    </FormControl>
+        ),
+      }}
+    />
   );
 }

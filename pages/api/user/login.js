@@ -12,6 +12,8 @@ export default async function login(req, res) {
     return res.status(401).send("Unauthorized");
 
   const { email, password } = req.body;
+  if (!(email && password)) return res.status(403).send();
+
   const user = await getSchoolByEmail(email);
   if (!user) return res.status(401).send("Akun tidak ditemukan");
 
@@ -33,8 +35,13 @@ export default async function login(req, res) {
   const event = {
     name: `${id}.user`,
     event: {
+      oid: user.id,
+      id: user.idString,
       email: user.email,
       name: user.name,
+
+      active: user.active,
+      completed: user.completed,
     },
     expiresIn,
     archived: false,

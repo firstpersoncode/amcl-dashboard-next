@@ -17,10 +17,10 @@ import { Close } from "@mui/icons-material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import axios from "axios";
+import generateUID from "utils/generateUID";
 import Uploader from "components/Uploader";
-import Loader from "../Loader";
-import generateUID from "./utils/generateUID";
 import AutocompleteField from "components/AutoCompleteField";
+import Loader from "../Loader";
 
 export default function Participant({ onClose, fetchRows }) {
   const [isLoading, setIsLoading] = useState(false);
