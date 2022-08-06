@@ -95,7 +95,7 @@ export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
           </ListItem>
         </List>
       </Box>
-      <Typography
+      {/* <Typography
         sx={{
           position: "absolute",
           bottom: 16,
@@ -113,7 +113,7 @@ export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
         >
           @firstpersoncode
         </a>
-      </Typography>
+      </Typography> */}
     </SwipeableDrawer>
   );
 }

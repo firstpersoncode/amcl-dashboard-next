@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Button,
   Card,
@@ -6,25 +6,14 @@ import {
   CardMedia,
   Dialog,
   DialogContent,
-  FormControlLabel,
   Typography,
 } from "@mui/material";
 import { Upload } from "@mui/icons-material";
-import axios from "axios";
 import Loader from "./Loader";
 
-export default function Uploader({
-  label,
-  type,
-  value,
-  ownerId,
-  onChange,
-  onUpload,
-  submit,
-}) {
+export default function Uploader({ label, value, onChange }) {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [saved, setSaved] = useState(false);
   const [image, setImage] = useState(null);
   const [createObjectURL, setCreateObjectURL] = useState(null);
 
@@ -32,7 +21,6 @@ export default function Uploader({
     if (event.target.files && event.target.files[0]) {
       const i = event.target.files[0];
 
-      setSaved(false);
       setImage(i);
       setCreateObjectURL(URL.createObjectURL(i));
 

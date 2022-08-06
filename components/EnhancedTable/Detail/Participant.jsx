@@ -32,6 +32,13 @@ export default function Participant({ detail, onClose, fetchRows }) {
 
   const [valuesSchool, setValuesSchool] = useState({});
 
+  const [message, setMessage] = useState("");
+  const [openDialogMessage, setOpenDialogMessage] = useState(false);
+
+  const toggleMessage = () => {
+    setOpenDialogMessage(!openDialogMessage);
+  };
+
   useEffect(() => {
     (async () => {
       setIsLoading(true);
@@ -81,8 +88,8 @@ export default function Participant({ detail, onClose, fetchRows }) {
 
   const isOfficial = values.type === "official";
   const isParticipant = values.type === "student";
-  const isFutsal = valuesSchool.branch === "futsal";
-  const isUniv = valuesSchool.category === "univ";
+  const isFutsal = valuesSchool?.branch === "futsal";
+  const isUniv = valuesSchool?.category === "univ";
 
   const fileAvatar =
     values.files?.length && values.files.find((file) => file.type === "avatar");
@@ -109,7 +116,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
     body.append("file", avatar);
     body.append("type", "avatar");
     body.append("ownerId", ownerId);
-    return axios.post("/api/participants/upload", body);
+    return axios.post("/api/upload", body);
   };
 
   const uploadLicenseToServer = (ownerId) => {
@@ -117,7 +124,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
     body.append("file", license);
     body.append("type", "license");
     body.append("ownerId", ownerId);
-    return axios.post("/api/participants/upload", body);
+    return axios.post("/api/upload", body);
   };
 
   const handleUpdate = async () => {
@@ -135,13 +142,13 @@ export default function Participant({ detail, onClose, fetchRows }) {
         participant: data,
       });
 
-      if (avatar) await uploadAvatarToServer(startValues.id);
-      if (license) await uploadLicenseToServer(startValues.id);
+      if (avatar) await uploadAvatarToServer(startValues?.id);
+      if (license) await uploadLicenseToServer(startValues?.id);
     } catch (err) {
-      // if (err.response?.data) {
-      //   setMessage(err.response.data);
-      //   setOpenDialogMessage(true);
-      // }
+      if (err.response?.data) {
+        setMessage(err.response.data);
+        setOpenDialogMessage(true);
+      }
       console.error(err.response?.data || err);
     }
 
@@ -190,20 +197,20 @@ export default function Participant({ detail, onClose, fetchRows }) {
       <DialogTitle>
         <Typography variant="h5">{detail}</Typography>
         <Box>
-          {startValues.qrcode?.idString && (
+          {startValues?.qrcode?.idString && (
             <Button
-              disabled={startValues.qrcode.scannedAt}
+              disabled={startValues?.qrcode.scannedAt}
               size="small"
               variant="contained"
               onClick={toggleQRCode}
             >
-              {startValues.qrcode.scannedAt && (
+              {startValues?.qrcode.scannedAt && (
                 <TaskAlt color="success" sx={{ mr: 2 }} />
               )}
-              {startValues.qrcode?.scannedAt ? (
+              {startValues?.qrcode?.scannedAt ? (
                 <Typography>
                   {format(
-                    new Date(startValues.qrcode.scannedAt),
+                    new Date(startValues?.qrcode.scannedAt),
                     "dd/MM/yyyy | hh:mm"
                   )}
                 </Typography>
@@ -450,12 +457,12 @@ export default function Participant({ detail, onClose, fetchRows }) {
                     select
                     name="school"
                     label="Sekolah"
-                    value={valuesSchool.idString || ""}
+                    value={valuesSchool?.idString || ""}
                     InputLabelProps={{ shrink: true }}
                     inputProps={{ readOnly: true }}
                   >
-                    <MenuItem value={valuesSchool.idString || ""}>
-                      {valuesSchool.name}
+                    <MenuItem value={valuesSchool?.idString || ""}>
+                      {valuesSchool?.name}
                     </MenuItem>
                   </TextField>
 
@@ -466,7 +473,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
                     select
                     name="category"
                     label="Kategori"
-                    value={valuesSchool.category || ""}
+                    value={valuesSchool?.category || ""}
                     InputLabelProps={{ shrink: true }}
                     inputProps={{ readOnly: true }}
                   >
@@ -481,7 +488,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
                     select
                     name="branch"
                     label="Cabang"
-                    value={valuesSchool.branch || ""}
+                    value={valuesSchool?.branch || ""}
                     InputLabelProps={{ shrink: true }}
                     inputProps={{ readOnly: true }}
                   >
@@ -508,17 +515,17 @@ export default function Participant({ detail, onClose, fetchRows }) {
         </DialogActions>
       </form>
 
-      {startValues.qrcode?.idString && (
+      {startValues?.qrcode?.idString && (
         <Dialog open={openQRCode} onClose={toggleQRCode}>
           <DialogContent sx={{ textAlign: "center" }}>
             <QRCodeSVG
               style={{ padding: "10px", backgroundColor: "#FFF" }}
               height={250}
               width={250}
-              value={startValues.qrcode.idString}
+              value={startValues?.qrcode.idString}
             />
             <Typography sx={{ mt: 2, fontSize: "12px" }}>
-              {startValues.qrcode.idString}
+              {startValues?.qrcode.idString}
             </Typography>
           </DialogContent>
         </Dialog>
@@ -542,6 +549,14 @@ export default function Participant({ detail, onClose, fetchRows }) {
           <Button onClick={closeConfirm}>Batal</Button>
           <Button onClick={handleUpdate}>Simpan</Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog open={openDialogMessage} onClose={toggleMessage}>
+        <DialogContent>
+          <Typography variant="p" component="div" sx={{ textAlign: "center" }}>
+            {message}
+          </Typography>
+        </DialogContent>
       </Dialog>
     </>
   );

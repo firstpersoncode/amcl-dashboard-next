@@ -42,6 +42,13 @@ export default function Participant({ onClose, fetchRows }) {
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
 
+  const [message, setMessage] = useState("");
+  const [openDialogMessage, setOpenDialogMessage] = useState(false);
+
+  const toggleMessage = () => {
+    setOpenDialogMessage(!openDialogMessage);
+  };
+
   const handleChange = (name) => (e) => {
     const target = name === "schoolId" ? e.target.value : e.target;
     setValues((v) => ({ ...v, [name]: target?.value }));
@@ -82,7 +89,7 @@ export default function Participant({ onClose, fetchRows }) {
     body.append("file", avatar);
     body.append("type", "avatar");
     body.append("ownerId", ownerId);
-    return axios.post("/api/participants/upload", body);
+    return axios.post("/api/upload", body);
   };
 
   const uploadLicenseToServer = (ownerId) => {
@@ -90,7 +97,7 @@ export default function Participant({ onClose, fetchRows }) {
     body.append("file", license);
     body.append("type", "license");
     body.append("ownerId", ownerId);
-    return axios.post("/api/participants/upload", body);
+    return axios.post("/api/upload", body);
   };
 
   const handleCreate = async () => {
@@ -102,7 +109,7 @@ export default function Participant({ onClose, fetchRows }) {
       const res = await axios.post("/api/participant/create", {
         participant: {
           ...values,
-          idString: `${selectedSchool.idString}-${generateUID()}`,
+          idString: `${selectedSchool?.idString}-${generateUID()}`,
           schoolId: selectedSchool.id,
           active: true,
           archived: false,
@@ -114,6 +121,10 @@ export default function Participant({ onClose, fetchRows }) {
         if (license) await uploadLicenseToServer(res.data.id);
       }
     } catch (err) {
+      if (err.response?.data) {
+        setMessage(err.response.data);
+        setOpenDialogMessage(true);
+      }
       console.error(err);
     }
     setIsLoading(false);
@@ -372,6 +383,14 @@ export default function Participant({ onClose, fetchRows }) {
           <Button onClick={closeConfirm}>Batal</Button>
           <Button onClick={handleCreate}>Simpan</Button>
         </DialogActions>
+      </Dialog>
+
+      <Dialog open={openDialogMessage} onClose={toggleMessage}>
+        <DialogContent>
+          <Typography variant="p" component="div" sx={{ textAlign: "center" }}>
+            {message}
+          </Typography>
+        </DialogContent>
       </Dialog>
     </>
   );

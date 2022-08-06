@@ -139,12 +139,12 @@ export default function EnhancedTable({ title, type, cells, filter }) {
                   return (
                     <TableRow
                       sx={{
-                        opacity: row.archived ? "0.5" : "1",
+                        opacity: row?.archived ? "0.5" : "1",
                         cursor: "pointer",
                       }}
                       key={index}
                       hover
-                      onClick={handleSelectDetail(row.idString)}
+                      onClick={handleSelectDetail(row?.idString)}
                       role="checkbox"
                       tabIndex={-1}
                     >
@@ -162,7 +162,7 @@ export default function EnhancedTable({ title, type, cells, filter }) {
                         <Button
                           size="small"
                           color="primary"
-                          onClick={handleSelectDetail(row.idString)}
+                          onClick={handleSelectDetail(row?.idString)}
                         >
                           Detail
                         </Button>
