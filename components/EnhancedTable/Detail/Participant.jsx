@@ -147,7 +147,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
     } catch (err) {
       if (err.response?.data) {
         setMessage(err.response.data);
-        setOpenDialogMessage(true);
+        toggleMessage();
       }
       console.error(err.response?.data || err);
     }

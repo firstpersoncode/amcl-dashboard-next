@@ -123,7 +123,7 @@ export default function Participant({ onClose, fetchRows }) {
     } catch (err) {
       if (err.response?.data) {
         setMessage(err.response.data);
-        setOpenDialogMessage(true);
+        toggleMessage();
       }
       console.error(err);
     }
