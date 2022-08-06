@@ -56,7 +56,6 @@ export default function QRScanner({ open, onClose }) {
     setOpenMessage(!openMessage);
   };
   const scanQRDetail = async (idString) => {
-    setProcessing(true);
     setMessage("");
     try {
       const res = await axios.post("/api/qrcode/scan", { idString });
@@ -78,6 +77,7 @@ export default function QRScanner({ open, onClose }) {
     if (processing) return;
 
     if (result) {
+      setProcessing(true);
       const idString = result.text;
       scanQRDetail(idString);
     }
@@ -176,11 +176,17 @@ export default function QRScanner({ open, onClose }) {
         maxWidth="md"
         fullScreen={isMobile}
         open={openQRCodeDetail}
-        onClose={toggleQRCodeDetail}
+        onClose={() => {
+          setProcessing(false);
+          toggleQRCodeDetail();
+        }}
       >
         <Participant
           participant={qrcodeDetail.owner}
-          onClose={toggleQRCodeDetail}
+          onClose={() => {
+            setProcessing(false);
+            toggleQRCodeDetail();
+          }}
         />
       </Dialog>
 
