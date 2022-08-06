@@ -419,7 +419,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
               <Uploader
                 label="Foto Profile"
                 type="avatar"
-                value={fileAvatar}
+                value={avatar || fileAvatar}
                 ownerId={startValues.id}
                 submit={submitAvatar}
                 onChange={handleChangeAvatar}
@@ -429,7 +429,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
                 <Uploader
                   label="Foto License"
                   type="license"
-                  value={fileLicense}
+                  value={license || fileLicense}
                   ownerId={startValues.id}
                   submit={submitLicense}
                   onChange={handleChangeLicense}

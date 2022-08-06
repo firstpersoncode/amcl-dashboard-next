@@ -66,15 +66,8 @@ export default function Participant({ onClose, fetchRows }) {
   const isUniv =
     schoolOptions.find((s) => s.id === values.schoolId)?.category === "univ";
 
-  const fileAvatar =
-    values.files?.length && values.files.find((file) => file.type === "avatar");
-  const fileLicense =
-    isOfficial &&
-    values.files?.length &&
-    values.files.find((file) => file.type === "license");
-
-  const [avatar, setAvatar] = useState(fileAvatar);
-  const [license, setLicense] = useState(fileLicense);
+  const [avatar, setAvatar] = useState();
+  const [license, setLicense] = useState();
   const [submitAvatar, setSubmitAvatar] = useState(false);
   const [submitLicense, setSubmitLicense] = useState(false);
 
@@ -334,7 +327,7 @@ export default function Participant({ onClose, fetchRows }) {
               <Uploader
                 label="Foto Profile"
                 type="avatar"
-                value={fileAvatar}
+                value={avatar}
                 ownerId={values.id}
                 submit={submitAvatar}
                 onChange={handleChangeAvatar}
@@ -344,7 +337,7 @@ export default function Participant({ onClose, fetchRows }) {
                 <Uploader
                   label="Foto License"
                   type="license"
-                  value={fileLicense}
+                  value={license}
                   ownerId={values.id}
                   submit={submitLicense}
                   onChange={handleChangeLicense}
