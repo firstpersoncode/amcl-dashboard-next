@@ -104,6 +104,7 @@ export default withSession(async function upload(req, res) {
 
   const form = new formidable.IncomingForm();
   return form.parse(req, async function (err, fields, files) {
+    if (err) throw err;
     if (!files.file) return res.status(403).send();
     try {
       if (
@@ -111,13 +112,15 @@ export default withSession(async function upload(req, res) {
           files.file.mimetype.toLowerCase()
         )
       )
-        throw "File not supported";
+        return res.status(500).send("File tidak bisa diupload");
       if (files.file.size > 3000000)
-        throw "File size melebihi 3mb, upload lebih kecil";
+        return res
+          .status(500)
+          .send("File size melebihi 3mb, upload lebih kecil");
 
       await uploadToDOSpaces(files.file);
       await saveFile(fields, files.file);
-      if (err) throw err;
+
       res.status(201).send("Berhasil upload file");
     } catch (err) {
       res.status(500).send(err);

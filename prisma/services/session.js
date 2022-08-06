@@ -12,7 +12,7 @@ module.exports.getAllSessions = async () => {
 
 module.exports.getSession = async (id) => {
   const session = await client.session.findFirst({
-    where: { id },
+    where: { expiresIn: { gt: new Date() }, id },
     include: {
       events: true,
     },

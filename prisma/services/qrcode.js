@@ -199,6 +199,15 @@ module.exports.deleteQRcodesBySchool = async (schoolId) => {
   return qrcodes;
 };
 
+module.exports.deleteQRcodeByOwner = async (ownerId) => {
+  const qrcode = await client.qrcode.deleteMany({
+    where: {
+      owner: { idString: ownerId },
+    },
+  });
+  return qrcode;
+};
+
 module.exports.deleteQRcode = async (idString) => {
   const qrcode = await client.qrcode.delete({
     where: {

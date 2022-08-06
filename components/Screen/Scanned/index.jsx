@@ -20,12 +20,22 @@ export default function Scanned() {
                   mode: "insensitive",
                 },
               },
-              // {
-              //   email: {
-              //     contains: e.target.value,
-              //     mode: "insensitive",
-              //   },
-              // },
+              {
+                owner: {
+                  idString: {
+                    contains: e.target.value,
+                    mode: "insensitive",
+                  },
+                },
+              },
+              {
+                owner: {
+                  name: {
+                    contains: e.target.value,
+                    mode: "insensitive",
+                  },
+                },
+              },
             ],
           },
         }));

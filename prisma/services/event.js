@@ -8,7 +8,7 @@ module.exports.getAllEvents = async () => {
 
 module.exports.getEvent = async (name) => {
   const event = await client.event.findFirst({
-    where: { name },
+    where: { expiresIn: { gt: new Date() }, name },
   });
   return event;
 };

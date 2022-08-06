@@ -24,7 +24,7 @@ export default withSession(async function update(req, res) {
       const { participants } = updatedSchool;
       for (const participant of participants) {
         const qrcode = {
-          idString: `${participant.idString}-${generateUID()}`,
+          idString: `${idString}-${generateUID()}`,
           ownerId: participant.id,
         };
 

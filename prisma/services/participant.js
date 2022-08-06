@@ -86,7 +86,7 @@ module.exports.getParticipant = async (idString) => {
   return participant;
 };
 
-module.exports.getParticipantPublic = async (idString) => {
+module.exports.getParticipantIDCard = async (idString) => {
   const participant = await client.participant.findUnique({
     where: { idString },
     select: {
@@ -114,6 +114,7 @@ module.exports.getParticipantPublic = async (idString) => {
       qrcode: {
         select: {
           idString: true,
+          scanned: true,
           scannedAt: true,
         },
       },
@@ -176,24 +177,18 @@ module.exports.deleteParticipant = async (idString) => {
 };
 
 module.exports.archiveParticipants = async (schoolId) => {
-  const participants = await client.participant.updateMany({
+  const participants = await client.participant.deleteMany({
     where: {
       schoolId,
-    },
-    data: {
-      archived: true,
     },
   });
   return participants;
 };
 
 module.exports.archiveParticipant = async (idString) => {
-  const participant = await client.participant.update({
+  const participant = await client.participant.delete({
     where: {
       idString,
-    },
-    data: {
-      archived: true,
     },
   });
   return participant;

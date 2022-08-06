@@ -170,12 +170,9 @@ module.exports.deleteSchool = async (idString) => {
 };
 
 module.exports.archiveSchool = async (idString) => {
-  const school = await client.school.update({
+  const school = await client.school.delete({
     where: {
       idString,
-    },
-    data: {
-      archived: true,
     },
   });
   return school;

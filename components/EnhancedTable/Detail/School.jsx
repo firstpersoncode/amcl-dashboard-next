@@ -97,6 +97,7 @@ export default function School({ detail, onClose, fetchRows }) {
     setStartValues({ ...startValues, ...data });
     setIsDirty(false);
     fetchRows();
+    onClose();
   };
 
   const [openConfirmArchive, setOpenConfirmArchive] = useState(false);

@@ -44,7 +44,7 @@ export default function Participant({ onClose, fetchRows }) {
 
   const handleChange = (name) => (e) => {
     const target = name === "schoolId" ? e.target.value : e.target;
-    setValues((v) => ({ ...v, [name]: target.value }));
+    setValues((v) => ({ ...v, [name]: target?.value }));
     setErrors((v) => ({ ...v, [name]: undefined }));
   };
 

@@ -72,7 +72,6 @@ export default function QRScanner({ open, onClose }) {
         setOpenMessage(true);
       }
     }
-    setProcessing(false);
   };
 
   const handleQRScan = (result, error) => {

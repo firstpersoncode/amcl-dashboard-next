@@ -91,8 +91,8 @@ export default function Participant({ detail, onClose, fetchRows }) {
     values.files?.length &&
     values.files.find((file) => file.type === "license");
 
-  const [avatar, setAvatar] = useState(fileAvatar);
-  const [license, setLicense] = useState(fileLicense);
+  const [avatar, setAvatar] = useState();
+  const [license, setLicense] = useState();
   const [submitAvatar, setSubmitAvatar] = useState(false);
   const [submitLicense, setSubmitLicense] = useState(false);
 
@@ -140,6 +140,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
     setStartValues({ ...startValues, ...data });
     setIsDirty(false);
     fetchRows();
+    onClose();
   };
 
   const [openConfirmArchive, setOpenConfirmArchive] = useState(false);
@@ -505,8 +506,16 @@ export default function Participant({ detail, onClose, fetchRows }) {
 
       {startValues.qrcode?.idString && (
         <Dialog open={openQRCode} onClose={toggleQRCode}>
-          <DialogContent sx={{ backgroundColor: "#FFF" }}>
-            <QRCodeSVG value={startValues.qrcode.idString} />
+          <DialogContent sx={{ textAlign: "center" }}>
+            <QRCodeSVG
+              style={{ padding: "10px", backgroundColor: "#FFF" }}
+              height={250}
+              width={250}
+              value={startValues.qrcode.idString}
+            />
+            <Typography sx={{ mt: 2, fontSize: "12px" }}>
+              {startValues.qrcode.idString}
+            </Typography>
           </DialogContent>
         </Dialog>
       )}

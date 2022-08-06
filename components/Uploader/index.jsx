@@ -74,7 +74,7 @@ export default function Uploader({
     <>
       <Typography sx={{ mb: 1 }}>{label}</Typography>
 
-      <Card sx={{ maxWidth: 345, mb: 2 }}>
+      <Card sx={{ mb: 2 }}>
         {createObjectURL || value?.url ? (
           <CardActionArea component="label">
             <CardMedia
