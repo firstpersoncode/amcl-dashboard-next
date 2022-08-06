@@ -40,23 +40,23 @@ export default function Uploader({
     }
   };
 
-  const uploadToServer = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const body = new FormData();
-      body.append("file", image);
-      body.append("type", type);
-      body.append("ownerId", ownerId);
-      await axios.post("/api/upload", body);
-      setSaved(true);
-    } catch (err) {
-      if (err.response?.data) setMessage(err.response.data);
-      setOpenDialogMessage(true);
-      console.error(err);
-    }
-    setIsLoading(false);
-    onUpload();
-  }, [image, type, ownerId, onUpload]);
+  // const uploadToServer = useCallback(async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const body = new FormData();
+  //     body.append("file", image);
+  //     body.append("type", type);
+  //     body.append("ownerId", ownerId);
+  //     await axios.post("/api/upload", body);
+  //     setSaved(true);
+  //   } catch (err) {
+  //     if (err.response?.data) setMessage(err.response.data);
+  //     setOpenDialogMessage(true);
+  //     console.error(err);
+  //   }
+  //   setIsLoading(false);
+  //   onUpload();
+  // }, [image, type, ownerId, onUpload]);
 
   const [openDialogMessage, setOpenDialogMessage] = useState(false);
 
@@ -64,11 +64,9 @@ export default function Uploader({
     setOpenDialogMessage(false);
   };
 
-  useEffect(() => {
-    (async () => {
-      if (submit) await uploadToServer();
-    })();
-  }, [submit, uploadToServer]);
+  // useEffect(() => {
+  //   if (submit) uploadToServer();
+  // }, [submit, uploadToServer]);
 
   return (
     <>
