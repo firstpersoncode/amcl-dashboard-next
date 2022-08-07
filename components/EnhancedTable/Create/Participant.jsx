@@ -30,7 +30,7 @@ export default function Participant({ onClose, fetchRows }) {
     (async () => {
       setIsLoading(true);
       try {
-        const res = await axios.get("/api/school/names");
+        const res = await axios.get("/api/common/school/names?e=admin");
         if (res?.data) setSchoolOptions(res.data);
       } catch (err) {
         console.error(err);
@@ -89,7 +89,7 @@ export default function Participant({ onClose, fetchRows }) {
     body.append("file", avatar);
     body.append("type", "avatar");
     body.append("ownerId", ownerId);
-    return axios.post("/api/upload", body);
+    return axios.post("/api/common/upload?e=admin", body);
   };
 
   const uploadLicenseToServer = (ownerId) => {
@@ -97,7 +97,7 @@ export default function Participant({ onClose, fetchRows }) {
     body.append("file", license);
     body.append("type", "license");
     body.append("ownerId", ownerId);
-    return axios.post("/api/upload", body);
+    return axios.post("/api/common/upload?e=admin", body);
   };
 
   const handleCreate = async () => {
@@ -106,7 +106,7 @@ export default function Participant({ onClose, fetchRows }) {
       const selectedSchool = schoolOptions.find(
         (s) => s.id === values.schoolId
       );
-      const res = await axios.post("/api/participant/create", {
+      const res = await axios.post("/api/common/participant/create?e=admin", {
         participant: {
           ...values,
           idString: `${selectedSchool?.idString}-${generateUID()}`,

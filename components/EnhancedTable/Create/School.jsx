@@ -49,7 +49,7 @@ export default function School({ onClose, fetchRows }) {
   const handleCreate = async () => {
     setIsLoading(true);
     try {
-      await axios.post("/api/school/create", {
+      await axios.post("/api/common/school/create?e=admin", {
         school: {
           ...values,
           idString: generateUID(),

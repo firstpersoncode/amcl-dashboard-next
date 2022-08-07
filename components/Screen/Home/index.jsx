@@ -10,17 +10,11 @@ export default function Home() {
 
       <Grid container spacing={2}>
         <Grid item>
-          <Count
-            title="Jumlah Sekolah terdaftar"
-            dataCountEndpoint="/api/school/count"
-          />
+          <Count title="Jumlah Sekolah terdaftar" type="school" />
         </Grid>
 
         <Grid item>
-          <Count
-            title="Jumlah Peserta terdaftar"
-            dataCountEndpoint="/api/participant/count"
-          />
+          <Count title="Jumlah Peserta terdaftar" type="participant" />
         </Grid>
       </Grid>
     </>

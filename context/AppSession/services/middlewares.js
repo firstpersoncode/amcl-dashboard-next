@@ -19,13 +19,26 @@ export function withSessionSsr(handler) {
   };
 }
 
-export function withSession(handler) {
+export function withSession(
+  handler,
+  { roles = ["user", "admin"], methods = ["GET"], isLoggedIn = true }
+) {
   return async (req, res, ...rest) => {
+    if (!methods.includes(req.method)) return res.status(404).send("Not found");
+
     const configs = sessionConfigs();
     const session = new SessionController(configs, { req, res });
     req.session = await session.fetch();
 
     if (!req.session?.id) return res.status(403).send("Forbidden resource");
+
+    const { e } = req.query;
+    if (!e || !roles.includes(e)) return res.status(403).send("Forbidden");
+    const loggedIn = isLoggedIn
+      ? !req.session.getEvent(e)
+      : req.session.getEvent(e);
+
+    if (loggedIn) return res.status(403).send("Forbidden");
 
     return handler(req, res, ...rest);
   };
