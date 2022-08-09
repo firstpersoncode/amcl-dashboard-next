@@ -43,7 +43,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
     (async () => {
       setIsLoading(true);
       try {
-        const res = await axios.post("/api/common/participant/read", {
+        const res = await axios.post("/api/participant/read", {
           idString: detail,
         });
         if (res?.data) {
@@ -116,7 +116,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
     body.append("file", avatar);
     body.append("type", "avatar");
     body.append("ownerId", ownerId);
-    return axios.post("/api/common/upload", body);
+    return axios.post("/api/upload", body);
   };
 
   const uploadLicenseToServer = (ownerId) => {
@@ -124,7 +124,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
     body.append("file", license);
     body.append("type", "license");
     body.append("ownerId", ownerId);
-    return axios.post("/api/common/upload", body);
+    return axios.post("/api/upload", body);
   };
 
   const handleUpdate = async () => {
@@ -137,7 +137,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
 
     setIsLoading(true);
     try {
-      await axios.post("/api/common/participant/update", {
+      await axios.post("/api/participant/update", {
         idString: detail,
         participant: data,
       });
@@ -174,7 +174,7 @@ export default function Participant({ detail, onClose, fetchRows }) {
   const handleArchive = async () => {
     setIsLoading(true);
     try {
-      await axios.post("/api/common/participant/archive", {
+      await axios.post("/api/participant/archive", {
         idString: detail,
       });
     } catch (err) {

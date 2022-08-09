@@ -38,7 +38,7 @@ export default function EnhancedTable({ title, type, cells, filter }) {
     timeout.current = setTimeout(async () => {
       setIsLoading(true);
       try {
-        const res = await axios.post("/api/common/" + type + "/read", {
+        const res = await axios.post("/api/" + type + "/read", {
           take: rowsPerPage,
           skip: page * rowsPerPage,
           orderBy,
@@ -49,7 +49,7 @@ export default function EnhancedTable({ title, type, cells, filter }) {
 
         // console.log(res.data);
 
-        const c = await axios.post("/api/common/" + type + "/count", {
+        const c = await axios.post("/api/" + type + "/count", {
           filter: cleanObj(filter),
         });
         setCount(c.data.count);

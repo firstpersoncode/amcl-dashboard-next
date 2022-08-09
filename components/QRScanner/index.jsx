@@ -58,7 +58,7 @@ export default function QRScanner({ open, onClose }) {
   const scanQRDetail = async (idString) => {
     setMessage("");
     try {
-      const res = await axios.post("/api/common/qrcode/scan", {
+      const res = await axios.post("/api/qrcode/scan", {
         idString,
       });
 

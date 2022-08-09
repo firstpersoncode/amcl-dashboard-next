@@ -35,7 +35,7 @@ export default function Uploader({ label, value, onChange }) {
   //     body.append("file", image);
   //     body.append("type", type);
   //     body.append("ownerId", ownerId);
-  //     await axios.post("/api/common/upload", body);
+  //     await axios.post("/api/upload", body);
   //     setSaved(true);
   //   } catch (err) {
   //     if (err.response?.data) setMessage(err.response.data);
