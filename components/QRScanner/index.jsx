@@ -75,13 +75,13 @@ export default function QRScanner({ open, onClose }) {
     }
   };
 
-  const handleQRScan = (result, error) => {
+  const handleQRScan = async (result, error) => {
     if (processing) return;
 
     if (result) {
       setProcessing(true);
       const idString = result.text;
-      scanQRDetail(idString);
+      await scanQRDetail(idString);
     }
 
     if (error) {
