@@ -57,7 +57,7 @@ export default function useForm() {
     } else {
       setIsLoading(true);
       try {
-        await axios.post("/api/common/admin", { ...values });
+        await axios.post("/api/common/login", { ...values });
         replace("/");
       } catch (err) {
         console.error(err);
@@ -72,7 +72,7 @@ export default function useForm() {
   const onCaptchaVerify = async (c) => {
     setIsLoading(true);
     try {
-      await axios.post("/api/common/admin", { ...values, captcha: c });
+      await axios.post("/api/common/login", { ...values, captcha: c });
       replace("/");
     } catch (err) {
       if (err.response?.data) setMessage(err.response.data);
