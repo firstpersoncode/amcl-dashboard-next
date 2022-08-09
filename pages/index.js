@@ -14,17 +14,6 @@ export default function Index({ session, global }) {
 
 export const getServerSideProps = withSessionSsr(
   async function getServerSideProps(ctx) {
-    const isLoggedIn = ctx.req.session.getEvent("admin");
-
-    if (!isLoggedIn) {
-      return {
-        redirect: {
-          permanent: false,
-          destination: "/login",
-        },
-      };
-    }
-
     return {
       props: {
         global: { page: {}, ua: ctx.req.headers["user-agent"] },
