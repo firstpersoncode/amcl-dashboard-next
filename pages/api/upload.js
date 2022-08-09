@@ -1,12 +1,16 @@
 import fs from "fs";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  PutObjectCommand,
+  DeleteObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import formidable from "formidable";
 import imagemin from "imagemin";
 import imageminMozjpeg from "imagemin-mozjpeg";
 import imageminPngquant from "imagemin-pngquant";
 import imageminWebp from "imagemin-webp";
 import { withSession } from "context/AppSession";
-import { createOrUpdateFile } from "prisma/services/file";
+import { createOrUpdateFile, getFile } from "prisma/services/file";
 
 export const config = {
   api: {
@@ -22,6 +26,18 @@ const s3Client = new S3Client({
     secretAccessKey: process.env.DO_SPACES_SECRET,
   },
 });
+
+const deleteFileIfExist = async ({ type, ownerId }) => {
+  const file = await getFile({ type, ownerId });
+  if (file) {
+    const params = {
+      Bucket: process.env.DO_SPACES_BUCKET,
+      Key: file.name,
+    };
+
+    return s3Client.send(new DeleteObjectCommand(params));
+  }
+};
 
 const resizeFile = async ({
   source,
@@ -79,10 +95,10 @@ const uploadToDOSpaces = async (file) => {
     ContentType: file.mimetype,
   };
 
-  await s3Client.send(new PutObjectCommand(params));
-
   if (isCompressed) fs.rmSync(`./tmp/${file.newFilename}`, { recursive: true });
   else fs.unlinkSync(file.filepath);
+
+  return s3Client.send(new PutObjectCommand(params));
 };
 
 const saveFile = async ({ type, ownerId }, file) => {
@@ -110,11 +126,12 @@ export default withSession(
           )
         )
           return res.status(500).send("File tidak bisa diupload");
-        if (files.file.size > 3000000)
+        if (files.file.size > 2000000)
           return res
             .status(500)
-            .send("File size melebihi 3mb, upload lebih kecil");
+            .send("File size melebihi 2mb, upload lebih kecil");
 
+        await deleteFileIfExist(fields);
         await uploadToDOSpaces(files.file);
         await saveFile(fields, files.file);
 

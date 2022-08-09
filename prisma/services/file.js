@@ -6,9 +6,12 @@ module.exports.getAllFiles = async () => {
   return files;
 };
 
-module.exports.getFile = async (id) => {
+module.exports.getFile = async ({ type, ownerId }) => {
   const file = await client.file.findFirst({
-    where: { id },
+    where: {
+      type,
+      ownerId,
+    },
   });
   return file;
 };
