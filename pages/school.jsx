@@ -1,12 +1,12 @@
 import { CommonContextProvider } from "context/Common";
 import { AppSessionContextProvider, withSessionSsr } from "context/AppSession";
-import ModalLogin from "components/ModalLogin";
+import Screen from "components/Screen";
 
-export default function Login({ session, global }) {
+export default function School({ session, global }) {
   return (
     <AppSessionContextProvider session={session}>
       <CommonContextProvider context={global}>
-        <ModalLogin />
+        <Screen />
       </CommonContextProvider>
     </AppSessionContextProvider>
   );
@@ -20,8 +20,5 @@ export const getServerSideProps = withSessionSsr(
       },
     };
   },
-  {
-    errorOnLoggedIn: true,
-    redirect: { permanent: false, destination: "/dashboard" },
-  }
+  { redirect: { permanent: false, destination: "/login" } }
 );

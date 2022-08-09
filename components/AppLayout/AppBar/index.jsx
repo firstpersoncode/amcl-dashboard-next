@@ -40,14 +40,14 @@ export default function AppBar({ onToggleDrawer }) {
             justifyContent: isMobile ? "center" : "flex-start",
           }}
         >
-          <Link href="/dashboard">
+          <Link href="/">
             <a>
               <Image width={30} height={40} src="/logo-md.png" alt="Logo" />
             </a>
           </Link>
 
           {!isMobile && (
-            <Link href="/dashboard" passHref>
+            <Link href="/" passHref>
               <a>
                 <Typography variant="h5">Makassar Champion League</Typography>
               </a>

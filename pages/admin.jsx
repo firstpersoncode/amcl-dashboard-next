@@ -2,7 +2,7 @@ import { CommonContextProvider } from "context/Common";
 import { AppSessionContextProvider, withSessionSsr } from "context/AppSession";
 import Screen from "components/Screen";
 
-export default function Index({ session, global }) {
+export default function Admin({ session, global }) {
   return (
     <AppSessionContextProvider session={session}>
       <CommonContextProvider context={global}>
@@ -20,5 +20,5 @@ export const getServerSideProps = withSessionSsr(
       },
     };
   },
-  { redirect: { permanent: false, destination: "/dashboard/login" } }
+  { redirect: { permanent: false, destination: "/login" } }
 );

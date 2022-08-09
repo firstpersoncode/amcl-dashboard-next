@@ -45,7 +45,7 @@ export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
       <Box sx={{ overflow: "auto" }}>
         <List>
           <ListItem disablePadding>
-            <Link href="/dashboard/school" passHref>
+            <Link href="/school" passHref>
               <ListItemButton component="a">
                 <ListItemIcon>
                   <LabelImportant />
@@ -57,7 +57,7 @@ export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
           </ListItem>
 
           <ListItem disablePadding>
-            <Link href="/dashboard/participant" passHref>
+            <Link href="/participant" passHref>
               <ListItemButton component="a">
                 <ListItemIcon>
                   <Person />
@@ -69,7 +69,7 @@ export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
           </ListItem>
 
           <ListItem disablePadding>
-            <Link href="/dashboard/scanned" passHref>
+            <Link href="/scanned" passHref>
               <ListItemButton component="a">
                 <ListItemIcon>
                   <QrCodeScanner />
@@ -83,7 +83,7 @@ export default function DrawerMenu({ open, onToggleDrawer, drawerWidth }) {
         <Divider />
         <List>
           <ListItem disablePadding>
-            <Link href="/dashboard/admin" passHref>
+            <Link href="/admin" passHref>
               <ListItemButton component="a">
                 <ListItemIcon>
                   <Settings />
