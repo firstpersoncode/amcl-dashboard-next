@@ -32,7 +32,7 @@ export default function School({ detail, onClose, fetchRows }) {
     (async () => {
       setIsLoading(true);
       try {
-        const res = await axios.post("/api/common/school/read?e=admin", {
+        const res = await axios.post("/api/common/school/read", {
           idString: detail,
         });
         if (res?.data) {
@@ -87,7 +87,7 @@ export default function School({ detail, onClose, fetchRows }) {
 
     setIsLoading(true);
     try {
-      await axios.post("/api/common/school/update?e=admin", {
+      await axios.post("/api/common/school/update", {
         idString: detail,
         school: data,
       });
@@ -116,7 +116,7 @@ export default function School({ detail, onClose, fetchRows }) {
   const handleArchive = async () => {
     setIsLoading(true);
     try {
-      await axios.post("/api/common/school/archive?e=admin", {
+      await axios.post("/api/common/school/archive", {
         idString: detail,
       });
     } catch (err) {

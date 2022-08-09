@@ -17,7 +17,7 @@ export default function AppBar({ onToggleDrawer }) {
   const isMobile = useIsMobile();
   const { replace } = useRouter();
   const handleLogout = async () => {
-    await axios.get("/api/common/logout?e=admin");
+    await axios.get("/api/common/logout");
     replace("/login");
   };
 

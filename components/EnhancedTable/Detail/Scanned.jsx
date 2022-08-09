@@ -26,7 +26,7 @@ export default function Scanned({ detail, onClose }) {
     (async () => {
       setIsLoading(true);
       try {
-        const res = await axios.post("/api/common/qrcode/read?e=admin", {
+        const res = await axios.post("/api/common/qrcode/read", {
           idString: detail,
         });
         if (res?.data) {

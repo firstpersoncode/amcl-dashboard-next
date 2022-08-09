@@ -10,10 +10,7 @@ export default function Count({ type, title }) {
     (async () => {
       setIsLoading(true);
       try {
-        const res = await axios.post(
-          "/api/common/" + type + "/count?e=admin",
-          {}
-        );
+        const res = await axios.post("/api/common/" + type + "/count", {});
         if (res?.data.count) setCount(res?.data.count);
       } catch (err) {
         console.error(err);

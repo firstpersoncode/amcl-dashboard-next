@@ -26,7 +26,7 @@ export default function Filter({
     (async () => {
       setIsLoading(true);
       try {
-        const res = await axios.get("/api/common/school/names?e=admin");
+        const res = await axios.get("/api/common/school/names");
         if (res?.data) setSchoolOptions(res.data);
       } catch (err) {
         console.error(err);
