@@ -6,7 +6,9 @@ module.exports = () => {
     env: {
       BUILD_ENV: process.env.BUILD_ENV,
       MONGODB_URI: process.env.MONGODB_URI,
-      MONGODB_DB: process.env.MONGODB_DB,
+
+      SESSION_NAME: process.env.SESSION_NAME,
+      SESSION_ROLE: process.env.SESSION_ROLE,
       SESSION_SECRET_KEY: process.env.SESSION_SECRET_KEY,
       API_KEY: process.env.API_KEY,
 
