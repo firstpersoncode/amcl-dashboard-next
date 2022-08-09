@@ -20,5 +20,5 @@ export const getServerSideProps = withSessionSsr(
       },
     };
   },
-  { redirect: { permanent: false, destination: "/login" } }
+  { redirect: { permanent: false, destination: "/dashboard/login" } }
 );
