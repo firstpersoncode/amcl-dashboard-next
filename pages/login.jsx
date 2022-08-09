@@ -30,5 +30,6 @@ export const getServerSideProps = withSessionSsr(
         global: { page: {}, ua: ctx.req.headers["user-agent"] },
       },
     };
-  }
+  },
+  { errorOnLoggedIn: true, redirect: { permanent: false, destination: "/" } }
 );

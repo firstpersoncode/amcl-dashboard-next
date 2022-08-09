@@ -1,6 +1,6 @@
-export default function sessionConfigs() {
+export default function sessionConfigs(name) {
   return {
-    name: "_amcl",
+    name,
     maxAge: 60 * 60 * 24 * 7, // 7 days
   };
 }
