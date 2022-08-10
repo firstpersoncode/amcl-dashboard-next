@@ -55,16 +55,9 @@ export default function Participant({ onClose, fetchRows }) {
     setErrors((v) => ({ ...v, [name]: undefined }));
   };
 
-  const [openConfirm, setOpenConfirm] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setOpenConfirm(true);
-  };
-
-  const closeConfirm = () => {
-    setOpenConfirm(false);
-  };
+  useEffect(() => {
+    setErrors({});
+  }, [values.type, values.schoolId]);
 
   const isOfficial = values.type === "official";
   const isParticipant = values.type === "participant";
@@ -78,10 +71,12 @@ export default function Participant({ onClose, fetchRows }) {
 
   const handleChangeAvatar = ({ image }) => {
     setAvatar(image);
+    setErrors((v) => ({ ...v, avatar: undefined }));
   };
 
   const handleChangeLicense = ({ image }) => {
     setLicense(image);
+    setErrors((v) => ({ ...v, license: undefined }));
   };
 
   const uploadAvatarToServer = (ownerId) => {
@@ -98,6 +93,102 @@ export default function Participant({ onClose, fetchRows }) {
     body.append("type", "license");
     body.append("ownerId", ownerId);
     return axios.post("/api/upload", body);
+  };
+
+  const validate = () => {
+    let hasError = false;
+    if (!values.type) {
+      hasError = true;
+      setErrors((v) => ({ ...v, type: "Masukkan type" }));
+    }
+
+    if (!values.name) {
+      hasError = true;
+      setErrors((v) => ({ ...v, name: "Masukkan nama" }));
+    }
+
+    if (!values.email) {
+      hasError = true;
+      setErrors((v) => ({ ...v, email: "Masukkan email" }));
+    } else if (
+      !String(values.email)
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        )
+    ) {
+      hasError = true;
+      setErrors((v) => ({ ...v, email: "Format email tidak benar" }));
+    }
+
+    if (!values.dob) {
+      hasError = true;
+      setErrors((v) => ({ ...v, dob: "Masukkan tanggal lahir" }));
+    }
+
+    if (isParticipant && !values.studentId) {
+      hasError = true;
+      setErrors((v) => ({ ...v, studentId: "Masukkan NIS/NIM" }));
+    }
+
+    if (isParticipant && !isUniv && !values.class) {
+      hasError = true;
+      setErrors((v) => ({ ...v, class: "Masukkan kelas" }));
+    }
+
+    if (!values.phone) {
+      hasError = true;
+      setErrors((v) => ({ ...v, phone: "Masukkan nomor telephone" }));
+    } else if (!/^[\s()+-]*(\d[\s()+-]*){6,20}$/.test(values.phone)) {
+      hasError = true;
+      setErrors((v) => ({ ...v, phone: "Format nomor telephone tidak benar" }));
+    }
+
+    if (!values.gender) {
+      hasError = true;
+      setErrors((v) => ({ ...v, gender: "Masukkan gender" }));
+    }
+
+    if (isParticipant && isFutsal && !values.futsalPosition) {
+      hasError = true;
+      setErrors((v) => ({ ...v, futsalPosition: "Masukkan posisi" }));
+    }
+
+    if (isOfficial && !values.officialPosition) {
+      hasError = true;
+      setErrors((v) => ({ ...v, officialPosition: "Masukkan jabatan" }));
+    }
+
+    // if (!(fileAvatar || avatar)) {
+    //   hasError = true;
+    //   setErrors((v) => ({ ...v, avatar: "Masukkan foto profil" }));
+    // }
+
+    // if (isOfficial && !(fileLicense || license)) {
+    //   hasError = true;
+    //   setErrors((v) => ({ ...v, license: "Masukkan foto lisensi" }));
+    // }
+
+    if (!values.schoolId) {
+      hasError = true;
+      setErrors((v) => ({ ...v, schoolId: "Masukkan sekolah" }));
+    }
+
+    return hasError;
+  };
+
+  const [openConfirm, setOpenConfirm] = useState(false);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const hasError = validate();
+    if (hasError) return;
+
+    setOpenConfirm(true);
+  };
+
+  const closeConfirm = () => {
+    setOpenConfirm(false);
   };
 
   const handleCreate = async () => {
@@ -159,11 +250,29 @@ export default function Participant({ onClose, fetchRows }) {
                 sx={{ mb: 2 }}
                 size="small"
                 fullWidth
+                select
+                name="type"
+                label="Type"
+                value={values.type || ""}
+                onChange={handleChange("type")}
+                error={Boolean(errors.type)}
+                helperText={errors.type}
+              >
+                <MenuItem value="participant">Peserta</MenuItem>
+                <MenuItem value="official">Official</MenuItem>
+              </TextField>
+
+              <TextField
+                required
+                sx={{ mb: 2 }}
+                size="small"
+                fullWidth
                 name="name"
                 label="Nama"
                 variant="standard"
                 value={values.name || ""}
                 onChange={handleChange("name")}
+                error={Boolean(errors.name)}
                 helperText={errors.name}
               />
 
@@ -248,24 +357,7 @@ export default function Participant({ onClose, fetchRows }) {
                 <MenuItem value="female">Wanita</MenuItem>
               </TextField>
 
-              <TextField
-                required
-                sx={{ mb: 2 }}
-                size="small"
-                fullWidth
-                select
-                name="type"
-                label="Type"
-                value={values.type || ""}
-                onChange={handleChange("type")}
-                error={Boolean(errors.type)}
-                helperText={errors.type}
-              >
-                <MenuItem value="participant">Peserta</MenuItem>
-                <MenuItem value="official">Official</MenuItem>
-              </TextField>
-
-              {!isOfficial && (
+              {values.type && !isOfficial && (
                 <TextField
                   required
                   sx={{ mb: 2 }}
@@ -363,6 +455,8 @@ export default function Participant({ onClose, fetchRows }) {
                   label: s.name,
                   value: s.id,
                 }))}
+                error={Boolean(errors.schoolId)}
+                helperText={errors.schoolId}
               />
             </Grid>
           </Grid>
