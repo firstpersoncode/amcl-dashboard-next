@@ -19,8 +19,14 @@ import cleanObj from "./utils/cleanObj";
 import Detail from "./Detail";
 import Create from "./Create";
 
-export default function EnhancedTable({ title, type, cells, filter }) {
-  const [orderBy, setOrderBy] = useState("updatedAt");
+export default function EnhancedTable({
+  title,
+  type,
+  cells,
+  filter,
+  orderBy: _orderBy = "updatedAt",
+}) {
+  const [orderBy, setOrderBy] = useState(_orderBy);
   const [order, setOrder] = useState("desc");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);

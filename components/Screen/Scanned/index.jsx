@@ -4,7 +4,7 @@ import EnhancedTable from "components/EnhancedTable";
 import Filter from "./Filter";
 
 export default function Scanned() {
-  const [filter, setFilter] = useState({ scannedAt: { gte: startOfToday() } });
+  const [filter, setFilter] = useState({ createdAt: { gte: startOfToday() } });
 
   const onChangeFilter = (name) => (e) => {
     if (name === "search") {
@@ -48,8 +48,8 @@ export default function Scanned() {
     } else
       setFilter((v) => ({
         ...v,
-        scannedAt: {
-          ...v.scannedAt,
+        createdAt: {
+          ...v.createdAt,
           [name]: e.target.value ? new Date(e.target.value) : undefined,
         },
       }));
@@ -74,6 +74,7 @@ export default function Scanned() {
       <EnhancedTable
         title="Kehadiran"
         type="qrcode"
+        orderBy="createdAt"
         cells={[
           (row) => ({
             id: "idString",
@@ -81,11 +82,9 @@ export default function Scanned() {
             value: row?.idString,
           }),
           (row) => ({
-            id: "scannedAt",
-            label: "Scan",
-            value:
-              row?.scannedAt &&
-              format(new Date(row.scannedAt), "dd MMM yyyy - HH:mm"),
+            id: "owner",
+            label: "Pemilik",
+            value: row?.owner.name,
           }),
           (row) => ({
             id: "createdAt",
@@ -93,13 +92,6 @@ export default function Scanned() {
             value:
               row?.createdAt &&
               format(new Date(row.createdAt), "dd MMM yyyy - HH:mm"),
-          }),
-          (row) => ({
-            id: "updatedAt",
-            label: "Diperbarui",
-            value:
-              row?.updatedAt &&
-              format(new Date(row.updatedAt), "dd MMM yyyy - HH:mm"),
           }),
         ]}
         filter={{ ...filter, owner: { school: { ...filterSchool } } }}

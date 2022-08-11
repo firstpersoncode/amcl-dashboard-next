@@ -1,5 +1,5 @@
 import { withSession } from "context/AppSession";
-import { countQRCodes } from "prisma/services/qrcode";
+import { countQRCodes } from "prisma/services/scanned";
 
 export default withSession(
   async function count(req, res) {
