@@ -49,7 +49,7 @@ export default function AppBar({ onToggleDrawer }) {
           {!isMobile && (
             <Link href="/" passHref>
               <a>
-                <Typography variant="h5">Makassar Champion League</Typography>
+                <Typography variant="h5">Makassar Champions League</Typography>
               </a>
             </Link>
           )}
