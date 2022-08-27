@@ -170,10 +170,10 @@ export default function Participant({ participant, onClose }) {
                 InputLabelProps={{ shrink: true }}
                 inputProps={{ readOnly: true }}
               >
-                <MenuItem value="goal">Penjaga Gawang</MenuItem>
-                <MenuItem value="back">Pertahanan</MenuItem>
-                <MenuItem value="mid">Tengah</MenuItem>
-                <MenuItem value="forward">Penyerang</MenuItem>
+                <MenuItem value="kiper">Kiper</MenuItem>
+                <MenuItem value="anchor">Anchor</MenuItem>
+                <MenuItem value="flank">Flank</MenuItem>
+                <MenuItem value="pivot">Pivot</MenuItem>
               </TextField>
             )}
 

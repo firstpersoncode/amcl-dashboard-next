@@ -119,10 +119,10 @@ enum ParticipantType {
 }
 
 enum ParticipantFutsalPosition {
-  goal
-  forward
-  mid
-  back
+  kiper
+  anchor
+  flank
+  pivot
 }
 
 enum ParticipantOfficialPosition {
