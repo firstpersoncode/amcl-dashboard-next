@@ -90,7 +90,7 @@ export default function Filter({
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               label="Dari tanggal"
-              value={filter.scannedAt?.gte || ""}
+              value={filter.createdAt?.gte || ""}
               inputFormat="dd/MM/yyyy"
               onChange={(value) => {
                 onChangeFilter("gte")({ target: { value } });
@@ -111,7 +111,7 @@ export default function Filter({
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               label="Sampai tanggal"
-              value={filter.scannedAt?.lte || ""}
+              value={filter.createdAt?.lte || ""}
               inputFormat="dd/MM/yyyy"
               onChange={(value) => {
                 onChangeFilter("lte")({ target: { value } });

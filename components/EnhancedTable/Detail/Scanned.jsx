@@ -39,22 +39,22 @@ export default function Scanned({ detail, onClose }) {
     })();
   }, [detail]);
 
-  const isOfficial = owner.type === "official";
-  const isStudent = owner.type === "student";
-  const isFutsal = owner.school?.branch === "futsal";
+  const isOfficial = owner?.type === "official";
+  const isStudent = owner?.type === "student";
+  const isFutsal = owner?.school?.branch === "futsal";
 
   const fileAvatar =
-    owner.files?.length && owner.files.find((file) => file.type === "avatar");
+    owner?.files?.length && owner?.files.find((file) => file.type === "avatar");
   const fileLicense =
     isOfficial &&
-    owner.files?.length &&
-    owner.files.find((file) => file.type === "license");
+    owner?.files?.length &&
+    owner?.files.find((file) => file.type === "license");
 
   return (
     <>
       {isLoading && <Loader />}
       <DialogTitle>
-        <Typography variant="h5">{owner.idString}</Typography>
+        <Typography variant="h5">{owner?.idString}</Typography>
         <IconButton
           onClick={onClose}
           sx={{
@@ -77,7 +77,7 @@ export default function Scanned({ detail, onClose }) {
               name="name"
               label="Nama"
               variant="standard"
-              value={owner.name || ""}
+              value={owner?.name || ""}
               InputLabelProps={{ shrink: true }}
               inputProps={{ readOnly: true }}
             />
@@ -85,7 +85,7 @@ export default function Scanned({ detail, onClose }) {
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 label="Tanggal lahir"
-                value={owner.dob || ""}
+                value={owner?.dob || ""}
                 inputFormat="dd/MM/yyyy"
                 renderInput={(params) => (
                   <TextField
@@ -107,7 +107,7 @@ export default function Scanned({ detail, onClose }) {
               name="email"
               label="Email"
               variant="standard"
-              value={owner.email || ""}
+              value={owner?.email || ""}
               InputLabelProps={{ shrink: true }}
               inputProps={{ readOnly: true }}
             />
@@ -119,7 +119,7 @@ export default function Scanned({ detail, onClose }) {
               name="phone"
               label="No. Telephone"
               variant="standard"
-              value={owner.phone || ""}
+              value={owner?.phone || ""}
               InputLabelProps={{ shrink: true }}
               inputProps={{ readOnly: true }}
             />
@@ -131,7 +131,7 @@ export default function Scanned({ detail, onClose }) {
               name="instagram"
               label="Instagram"
               variant="standard"
-              value={owner.instagram || ""}
+              value={owner?.instagram || ""}
               InputLabelProps={{ shrink: true }}
               inputProps={{ readOnly: true }}
             />
@@ -143,7 +143,7 @@ export default function Scanned({ detail, onClose }) {
               select
               name="gender"
               label="Gender"
-              value={owner.gender || ""}
+              value={owner?.gender || ""}
               InputLabelProps={{ shrink: true }}
               inputProps={{ readOnly: true }}
             >
@@ -159,7 +159,7 @@ export default function Scanned({ detail, onClose }) {
                 name="studentId"
                 label="NIS/NIM"
                 variant="standard"
-                value={owner.studentId || ""}
+                value={owner?.studentId || ""}
                 InputLabelProps={{ shrink: true }}
                 inputProps={{ readOnly: true }}
               />
@@ -173,7 +173,7 @@ export default function Scanned({ detail, onClose }) {
                 name="class"
                 label="Kelas"
                 variant="standard"
-                value={owner.class || ""}
+                value={owner?.class || ""}
                 InputLabelProps={{ shrink: true }}
                 inputProps={{ readOnly: true }}
               />
@@ -187,7 +187,7 @@ export default function Scanned({ detail, onClose }) {
                 select
                 name="futsalPosition"
                 label="Posisi"
-                value={owner.futsalPosition || ""}
+                value={owner?.futsalPosition || ""}
                 InputLabelProps={{ shrink: true }}
                 inputProps={{ readOnly: true }}
               >
@@ -206,7 +206,7 @@ export default function Scanned({ detail, onClose }) {
                 select
                 name="officialPosition"
                 label="Jabatan"
-                value={owner.officialPosition || ""}
+                value={owner?.officialPosition || ""}
                 InputLabelProps={{ shrink: true }}
                 inputProps={{ readOnly: true }}
               >
@@ -220,12 +220,12 @@ export default function Scanned({ detail, onClose }) {
 
           <Grid item sm={5} xs={12}>
             <Box sx={{ pointerEvents: "none" }}>
-              <Uploader type="avatar" value={fileAvatar} ownerId={owner.id} />
+              <Uploader type="avatar" value={fileAvatar} ownerId={owner?.id} />
               {isOfficial && (
                 <Uploader
                   type="license"
                   value={fileLicense}
-                  ownerId={owner.id}
+                  ownerId={owner?.id}
                 />
               )}
             </Box>
@@ -239,12 +239,12 @@ export default function Scanned({ detail, onClose }) {
                   select
                   name="school"
                   label="Sekolah"
-                  value={owner.school?.idString || ""}
+                  value={owner?.school?.idString || ""}
                   InputLabelProps={{ shrink: true }}
                   inputProps={{ readOnly: true }}
                 >
-                  <MenuItem value={owner.school?.idString || ""}>
-                    {owner.school?.name}
+                  <MenuItem value={owner?.school?.idString || ""}>
+                    {owner?.school?.name}
                   </MenuItem>
                 </TextField>
 
@@ -255,7 +255,7 @@ export default function Scanned({ detail, onClose }) {
                   select
                   name="category"
                   label="Kategori"
-                  value={owner.school?.category || ""}
+                  value={owner?.school?.category || ""}
                   InputLabelProps={{ shrink: true }}
                   inputProps={{ readOnly: true }}
                 >
@@ -271,7 +271,7 @@ export default function Scanned({ detail, onClose }) {
                   select
                   name="branch"
                   label="Cabang"
-                  value={owner.school?.branch || ""}
+                  value={owner?.school?.branch || ""}
                   InputLabelProps={{ shrink: true }}
                   inputProps={{ readOnly: true }}
                 >
@@ -286,7 +286,7 @@ export default function Scanned({ detail, onClose }) {
                   select
                   name="type"
                   label="Type"
-                  value={owner.type || ""}
+                  value={owner?.type || ""}
                   InputLabelProps={{ shrink: true }}
                   inputProps={{ readOnly: true }}
                 >

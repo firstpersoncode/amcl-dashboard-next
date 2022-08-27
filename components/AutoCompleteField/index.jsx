@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { Autocomplete, TextField } from "@mui/material";
 
-export default function AutocompleteField({ label, sx, options, onChange }) {
+export default function AutocompleteField({
+  label,
+  sx,
+  options,
+  onChange,
+  ...props
+}) {
   const [value, setValue] = useState();
   const [inputValue, setInputValue] = useState("");
 
@@ -19,7 +25,13 @@ export default function AutocompleteField({ label, sx, options, onChange }) {
       options={options}
       sx={sx}
       renderInput={(params) => (
-        <TextField {...params} size="small" fullWidth label={label} />
+        <TextField
+          {...params}
+          {...props}
+          size="small"
+          fullWidth
+          label={label}
+        />
       )}
     />
   );

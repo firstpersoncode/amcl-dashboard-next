@@ -1,5 +1,5 @@
 import { withSession } from "context/AppSession";
-import { getAllQRcodes, getQRcode } from "prisma/services/qrcode";
+import { getAllQRcodes, getQRcode } from "prisma/services/scanned";
 
 export default withSession(
   async function read(req, res) {

@@ -35,10 +35,53 @@ export default function School({ onClose, fetchRows }) {
     setErrors((v) => ({ ...v, [name]: undefined }));
   };
 
+  const validate = () => {
+    let hasError = false;
+
+    if (!values.name) {
+      hasError = true;
+      setErrors((v) => ({ ...v, name: "Masukkan nama" }));
+    }
+
+    if (!values.email) {
+      hasError = true;
+      setErrors((v) => ({ ...v, email: "Masukkan email" }));
+    } else if (
+      !String(values.email)
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        )
+    ) {
+      hasError = true;
+      setErrors((v) => ({ ...v, email: "Format email tidak benar" }));
+    }
+
+    if (!values.password) {
+      hasError = true;
+      setErrors((v) => ({ ...v, password: "Masukkan password" }));
+    }
+
+    if (!values.category) {
+      hasError = true;
+      setErrors((v) => ({ ...v, category: "Masukkan kategori" }));
+    }
+
+    if (!values.branch) {
+      hasError = true;
+      setErrors((v) => ({ ...v, branch: "Masukkan cabang" }));
+    }
+
+    return hasError;
+  };
+
   const [openConfirm, setOpenConfirm] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const hasError = validate();
+    if (hasError) return;
+
     setOpenConfirm(true);
   };
 
@@ -98,6 +141,7 @@ export default function School({ onClose, fetchRows }) {
                 variant="standard"
                 value={values.name || ""}
                 onChange={handleChange("name")}
+                error={Boolean(errors.name)}
                 helperText={errors.name}
               />
 
@@ -119,6 +163,8 @@ export default function School({ onClose, fetchRows }) {
                 sx={{ mb: 2 }}
                 value={values.password || ""}
                 onChange={handleChange("password")}
+                error={Boolean(errors.password)}
+                helperText={errors.password}
               />
 
               {/* <FormGroup>

@@ -97,6 +97,7 @@ model participant {
 
   files    file[]
   qrcode    qrcode?
+  scanneds  scanned[]
   school    school   @relation(fields: [schoolId], references: [id])
   schoolId  String @db.ObjectId
   
@@ -159,4 +160,13 @@ model qrcode {
   scannedAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model scanned {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  idString String
+  
+  owner    participant   @relation(fields: [ownerId], references: [id])
+  ownerId  String @db.ObjectId
+  createdAt DateTime @default(now())
 }
