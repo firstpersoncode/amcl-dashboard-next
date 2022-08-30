@@ -1,7 +1,12 @@
 import { add, isAfter } from "date-fns";
 import { sign, verify } from "jsonwebtoken";
 import nookies from "nookies";
-import { createEvent, deleteEvent, updateEvent } from "prisma/services/event";
+import {
+  createEvent,
+  createOrUpdateEvent,
+  deleteEvent,
+  updateEvent,
+} from "prisma/services/event";
 
 import { createSession, getSession } from "prisma/services/session";
 import parseUserAgent from "../utils/parseUserAgent";
@@ -106,15 +111,20 @@ export default class SessionController {
         return e;
       });
 
-      await updateEvent(newEvent.name, newEvent);
+      // await updateEvent(newEvent.name, newEvent);
     } else {
       this.session.events = [
         ...this.session.events,
         { ...newEvent, sessionId: this.session.id },
       ];
 
-      await createEvent({ ...newEvent, sessionId: this.session.id });
+      // await createEvent({ ...newEvent, sessionId: this.session.id });
     }
+
+    await createOrUpdateEvent(newEvent.name, {
+      ...newEvent,
+      sessionId: this.session.id,
+    });
   }
 
   async _deleteEvent(name) {
