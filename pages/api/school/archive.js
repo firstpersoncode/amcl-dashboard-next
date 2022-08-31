@@ -7,7 +7,7 @@ import { archiveSchool } from "prisma/services/school";
 export default withSession(
   async function archive(req, res) {
     const { idString } = req.body;
-    console.log(idString);
+
     await deleteQRcodesBySchool(idString);
     await deleteFileBySchool(idString);
     await archiveParticipants(idString);
