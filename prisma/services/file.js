@@ -68,8 +68,8 @@ module.exports.deleteFiles = async (id) => {
 };
 
 module.exports.deleteFileBySchool = async (schoolId) => {
-  const qrcodes = await client.qrcode.deleteMany({
-    where: { owner: { schoolId } },
+  const qrcodes = await client.file.deleteMany({
+    where: { owner: { school: { idString: schoolId } } },
   });
   return qrcodes;
 };

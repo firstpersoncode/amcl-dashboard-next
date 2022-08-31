@@ -179,7 +179,7 @@ module.exports.deleteParticipant = async (idString) => {
 module.exports.archiveParticipants = async (schoolId) => {
   const participants = await client.participant.deleteMany({
     where: {
-      schoolId,
+      school: { idString: schoolId },
     },
   });
   return participants;
