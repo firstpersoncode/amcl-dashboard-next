@@ -474,8 +474,12 @@ export default function Participant({ onClose, fetchRows }) {
           Apakah Anda yakin ingin membuat peserta baru?
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeConfirm}>Batal</Button>
-          <Button onClick={handleCreate}>Simpan</Button>
+          <Button disabled={isLoading} onClick={closeConfirm}>
+            Batal
+          </Button>
+          <Button disabled={isLoading} onClick={handleCreate}>
+            Simpan
+          </Button>
         </DialogActions>
       </Dialog>
 

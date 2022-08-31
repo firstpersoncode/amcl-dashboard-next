@@ -546,8 +546,12 @@ export default function Participant({ detail, onClose, fetchRows }) {
           Apakah Anda yakin ingin menyimpan perubahan?
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeConfirm}>Batal</Button>
-          <Button onClick={handleUpdate}>Simpan</Button>
+          <Button disabled={isLoading} onClick={closeConfirm}>
+            Batal
+          </Button>
+          <Button disabled={isLoading} onClick={handleUpdate}>
+            Simpan
+          </Button>
         </DialogActions>
       </Dialog>
 

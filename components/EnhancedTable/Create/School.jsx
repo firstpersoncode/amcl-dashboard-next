@@ -235,8 +235,12 @@ export default function School({ onClose, fetchRows }) {
           Apakah Anda yakin ingin membuat sekolah baru?
         </DialogContent>
         <DialogActions>
-          <Button onClick={closeConfirm}>Batal</Button>
-          <Button onClick={handleCreate}>Simpan</Button>
+          <Button disabled={isLoading} onClick={closeConfirm}>
+            Batal
+          </Button>
+          <Button disabled={isLoading} onClick={handleCreate}>
+            Simpan
+          </Button>
         </DialogActions>
       </Dialog>
     </>
