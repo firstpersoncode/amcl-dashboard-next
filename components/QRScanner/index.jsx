@@ -58,6 +58,7 @@ export default function QRScanner({ open, onClose }) {
   const scanQRDetail = async (idString) => {
     setMessage("");
     setProcessing(true);
+
     try {
       const res = await axios.post("/api/qrcode/scan", {
         idString,
@@ -65,7 +66,6 @@ export default function QRScanner({ open, onClose }) {
 
       if (res.data) {
         setQRCodeDetail(res.data);
-        toggleQRCodeDetail();
       }
     } catch (err) {
       console.error(err);
@@ -74,14 +74,20 @@ export default function QRScanner({ open, onClose }) {
         setOpenMessage(true);
       }
     }
+
+    toggleQRCodeDetail();
+    setProcessing(false);
   };
+
+  const scanner = useRef();
 
   const handleQRScan = async (result, error) => {
     if (processing) return;
+    if (scanner.current) clearTimeout(scanner.current);
 
     if (result) {
       const idString = result.text;
-      await scanQRDetail(idString);
+      scanner.current = setTimeout(() => scanQRDetail(idString), 500);
     }
 
     if (error) {
