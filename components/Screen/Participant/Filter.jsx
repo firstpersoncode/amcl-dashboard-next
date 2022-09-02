@@ -60,9 +60,8 @@ export default function Filter({
             value={filterSchool.id || ""}
             onChange={onChangeFilterSchool("id")}
             options={schoolOptions.map((s, i) => ({
-              label: s.name,
+              label: `${s.name} (${s.branch})`,
               value: s.id,
-              key: i,
             }))}
           />
         </Grid>

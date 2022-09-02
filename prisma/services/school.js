@@ -177,18 +177,3 @@ module.exports.archiveSchool = async (idString) => {
   });
   return school;
 };
-
-module.exports.getDuplicatedSchools = async () => {
-  return client.school.aggregateRaw({
-    pipeline: [
-      {
-        $group: {
-          _id: "$name",
-          idString: { $addToSet: "$idString" },
-          count: { $sum: 1 },
-        },
-      },
-      { $match: { _id: { $ne: null }, count: { $gt: 1 } } },
-    ],
-  });
-};
