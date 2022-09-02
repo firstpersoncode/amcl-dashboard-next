@@ -8,7 +8,7 @@ export default function AutocompleteField({
   onChange,
   ...props
 }) {
-  const [value, setValue] = useState();
+  const [value, setValue] = useState("");
   const [inputValue, setInputValue] = useState("");
 
   return (
