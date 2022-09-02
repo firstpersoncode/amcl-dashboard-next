@@ -83,7 +83,7 @@ enum SchoolBranch {
 model participant {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   idString  String  @unique
-  email     String  @unique
+  email     String
   name      String
   phone     String
   dob       DateTime
