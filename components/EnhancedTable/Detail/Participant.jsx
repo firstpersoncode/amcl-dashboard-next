@@ -144,6 +144,13 @@ export default function Participant({ detail, onClose, fetchRows }) {
 
       if (avatar) await uploadAvatarToServer(startValues?.id);
       if (license) await uploadLicenseToServer(startValues?.id);
+
+      setIsLoading(false);
+      closeConfirm();
+      setStartValues({ ...startValues, ...data });
+      setIsDirty(false);
+      fetchRows();
+      onClose();
     } catch (err) {
       if (err.response?.data) {
         setMessage(err.response.data);
@@ -151,13 +158,6 @@ export default function Participant({ detail, onClose, fetchRows }) {
       }
       console.error(err.response?.data || err);
     }
-
-    setIsLoading(false);
-    closeConfirm();
-    setStartValues({ ...startValues, ...data });
-    setIsDirty(false);
-    fetchRows();
-    onClose();
   };
 
   const [openConfirmArchive, setOpenConfirmArchive] = useState(false);

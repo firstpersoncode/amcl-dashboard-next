@@ -211,6 +211,10 @@ export default function Participant({ onClose, fetchRows }) {
         if (avatar) await uploadAvatarToServer(res.data.id);
         if (license) await uploadLicenseToServer(res.data.id);
       }
+      setIsLoading(false);
+      closeConfirm();
+      fetchRows();
+      onClose();
     } catch (err) {
       if (err.response?.data) {
         setMessage(err.response.data);
@@ -218,10 +222,6 @@ export default function Participant({ onClose, fetchRows }) {
       }
       console.error(err);
     }
-    setIsLoading(false);
-    closeConfirm();
-    fetchRows();
-    onClose();
   };
 
   return (
