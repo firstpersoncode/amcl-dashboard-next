@@ -47,7 +47,7 @@ const resizeFile = async ({
 }) => {
   const stats = fs.statSync(filepath);
   const fileSizeInBytes = stats.size;
-  const quality = fileSizeInBytes > 1000000 ? 10 : 30;
+  const quality = fileSizeInBytes > 750000 ? 7 : 30;
 
   const fileExt = originalFilename.split(".").pop().toLowerCase();
   const plugins = [];
@@ -126,10 +126,10 @@ export default withSession(
           )
         )
           return res.status(500).send("File tidak bisa diupload");
-        if (files.file.size > 2000000)
+        if (files.file.size > 1000000)
           return res
             .status(500)
-            .send("File size melebihi 2mb, upload lebih kecil");
+            .send("File size melebihi 1mb, upload lebih kecil");
 
         await deleteFileIfExist(fields);
         await uploadToDOSpaces(files.file);
