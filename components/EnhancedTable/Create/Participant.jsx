@@ -452,7 +452,7 @@ export default function Participant({ onClose, fetchRows }) {
                 value={values.schoolId || ""}
                 onChange={handleChange("schoolId")}
                 options={schoolOptions.map((s) => ({
-                  label: s.name,
+                  label: `${s.name} (${s.branch})`,
                   value: s.id,
                 }))}
                 error={Boolean(errors.schoolId)}
